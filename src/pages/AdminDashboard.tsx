@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LogOut, Plus, Edit, Trash2, Package } from 'lucide-react';
+import { LogOut, Plus, Edit, Trash2, Package, Diamond } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useProducts } from '../hooks/useProducts';
 import { ProductForm } from '../components/ProductForm';
@@ -86,36 +86,47 @@ export function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">💎</div>
-          <p className="text-xl text-gray-600">Cargando panel...</p>
+          <div className="text-6xl mb-4 text-amber-600 animate-pulse">
+            <Diamond size={64} strokeWidth={1} />
+          </div>
+          <p className="text-xl text-stone-600 font-serif">Cargando panel...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
-      <div className="bg-white shadow-lg border-b-4 border-pink-500">
-        <div className="max-w-7xl mx-auto px-4 py-6">
+    <div className="min-h-screen bg-stone-50 text-stone-800">
+      <div className="bg-white shadow-md border-b border-stone-100">
+        <div className="max-w-7xl mx-auto px-4 py-5">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
-              <p className="text-sm text-gray-600 mt-1">Perlas AC - Gestión de Productos</p>
+            <div className="flex items-center gap-4">
+              <div className="bg-stone-900 text-white p-2 rounded">
+                <Diamond size={24} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-serif text-stone-900 leading-none">Joyería Gallardo</h1>
+                <p className="text-xs text-stone-500 uppercase tracking-widest mt-1">Panel de Control</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-6">
               {user && (
-                <p className="text-xs text-gray-500 mt-1">
-                  Sesión activa: {user.email}
+                <p className="text-sm text-stone-500">
+                  <span className="opacity-50 mr-2">Sesión activa:</span>
+                  <span className="font-medium text-stone-700">{user.email}</span>
                 </p>
               )}
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 bg-stone-100 text-stone-600 px-4 py-2 rounded hover:bg-red-50 hover:text-red-600 font-medium transition-colors text-sm"
+              >
+                <LogOut size={16} />
+                Cerrar Sesión
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold transition-all"
-            >
-              <LogOut size={20} />
-              Cerrar Sesión
-            </button>
           </div>
         </div>
       </div>
@@ -124,12 +135,12 @@ export function AdminDashboard() {
         <div className="space-y-8">
           <CategoryManager />
 
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded border border-stone-200 shadow-sm p-6">
             <button
               onClick={handleAddProduct}
-              className="bg-green-600 text-white px-8 py-4 rounded-lg flex items-center gap-3 font-bold text-lg hover:bg-green-700 transition-all shadow-md"
+              className="bg-stone-900 text-white px-6 py-3 rounded flex items-center gap-2 font-medium hover:bg-stone-800 transition-all shadow hover:shadow-lg"
             >
-              <Plus size={24} />
+              <Plus size={20} />
               Agregar Nuevo Producto
             </button>
           </div>
@@ -139,22 +150,20 @@ export function AdminDashboard() {
           {categories.map((category) => {
             const categoryProducts = getProductsByCategory(category.id);
             return (
-              <div key={category.id} className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-r from-pink-500 to-blue-600 text-white p-6">
+              <div key={category.id} className="bg-white rounded border border-stone-200 shadow-sm overflow-hidden">
+                <div className="bg-stone-100 px-6 py-4 border-b border-stone-200 flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <Package size={28} />
-                    <div>
-                      <h2 className="text-2xl font-bold">{category.name}</h2>
-                      <p className="text-pink-100 text-sm">
-                        {categoryProducts.length} producto{categoryProducts.length !== 1 ? 's' : ''}
-                      </p>
-                    </div>
+                    <Package className="text-stone-400" size={20} />
+                    <h2 className="text-lg font-serif font-medium text-stone-800">{category.name}</h2>
                   </div>
+                  <span className="text-xs font-bold bg-stone-200 text-stone-600 px-2 py-1 rounded-full">
+                    {categoryProducts.length} producto{categoryProducts.length !== 1 ? 's' : ''}
+                  </span>
                 </div>
 
                 <div className="p-6">
                   {categoryProducts.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8">
+                    <p className="text-center text-stone-400 py-8 text-sm italic">
                       No hay productos en esta categoría
                     </p>
                   ) : (
@@ -162,10 +171,10 @@ export function AdminDashboard() {
                       {categoryProducts.map((product) => (
                         <div
                           key={product.id}
-                          className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-4 border-2 border-gray-200 hover:border-pink-300 transition-all"
+                          className="group bg-white rounded border border-stone-100 p-4 hover:border-amber-200 hover:shadow-md transition-all"
                         >
                           <div className="flex gap-4 mb-4">
-                            <div className="w-24 h-24 bg-gradient-to-br from-pink-100 to-blue-100 rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <div className="w-20 h-20 bg-stone-50 rounded flex items-center justify-center overflow-hidden flex-shrink-0 border border-stone-100">
                               {product.imagen_url ? (
                                 <img
                                   src={product.imagen_url}
@@ -173,17 +182,17 @@ export function AdminDashboard() {
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <span className="text-3xl">💎</span>
+                                <Diamond className="text-stone-200" size={24} />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-bold text-lg text-gray-900 truncate">
+                              <h4 className="font-serif font-medium text-stone-900 truncate">
                                 {product.codigo}
                               </h4>
-                              <p className="text-sm text-gray-600 line-clamp-2 mb-2">
+                              <p className="text-sm text-stone-500 line-clamp-2 mb-2 h-10">
                                 {product.descripcion || 'Sin descripción'}
                               </p>
-                              <p className="text-2xl font-bold text-pink-600">
+                              <p className="text-lg font-medium text-amber-700">
                                 ${product.precio}
                               </p>
                             </div>
@@ -191,18 +200,18 @@ export function AdminDashboard() {
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleEditProduct(product)}
-                              className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-bold hover:bg-blue-700 transition-all"
+                              className="flex-1 bg-stone-100 text-stone-700 py-2 rounded flex items-center justify-center gap-2 text-xs font-bold hover:bg-stone-200 transition-all uppercase tracking-wide"
                             >
-                              <Edit size={16} />
+                              <Edit size={14} />
                               Editar
                             </button>
                             <button
                               onClick={() => handleDeleteProduct(product)}
                               disabled={deleting === product.id}
-                              className="flex-1 bg-red-600 text-white py-2.5 rounded-lg flex items-center justify-center gap-2 text-sm font-bold hover:bg-red-700 disabled:opacity-50 transition-all"
+                              className="flex-1 bg-white border border-red-100 text-red-600 py-2 rounded flex items-center justify-center gap-2 text-xs font-bold hover:bg-red-50 disabled:opacity-50 transition-all uppercase tracking-wide"
                             >
-                              <Trash2 size={16} />
-                              {deleting === product.id ? 'Eliminando...' : 'Eliminar'}
+                              <Trash2 size={14} />
+                              {deleting === product.id ? '...' : 'Eliminar'}
                             </button>
                           </div>
                         </div>
@@ -230,3 +239,4 @@ export function AdminDashboard() {
     </div>
   );
 }
+

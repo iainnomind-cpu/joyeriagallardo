@@ -20,14 +20,21 @@ export function useAuth() {
   }, []);
 
   const signIn = async (email: string, password: string) => {
+    console.log('Intentando iniciar sesión para:', email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error de Supabase Auth:', error.status, error.message);
+      throw error;
+    }
+
+    console.log('Sesión de Supabase iniciada correctamente:', data.user?.id);
 
     if (data.user) {
+      console.log('Verificando perfil en la tabla "profiles"...');
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('role')
@@ -35,20 +42,35 @@ export function useAuth() {
         .maybeSingle();
 
       if (profileError) {
+        console.error('Error al consultar la tabla "profiles":', profileError);
         await supabase.auth.signOut();
-        throw new Error('Error al verificar permisos');
+        throw new Error(`Error de base de datos: ${profileError.message}`);
       }
 
-      if (!profile || profile.role !== 'admin') {
+      console.log('Perfil encontrado:', profile);
+
+      if (!profile) {
+        console.warn('No se encontró perfil para el usuario. El trigger handle_new_user podría haber fallado.');
+        // Opcional: Podrías permitir el acceso si confías en que el usuario de Auth es el admin de confianza
+        // Por ahora, lanzamos un error claro
         await supabase.auth.signOut();
-        throw new Error('Acceso denegado: solo administradores');
+        throw new Error('Usuario autenticado pero sin perfil configurado. Contacta soporte.');
       }
+
+      if (profile.role !== 'admin') {
+        console.warn(`Usuario ${email} tiene rol "${profile.role}", se requiere "admin"`);
+        await supabase.auth.signOut();
+        throw new Error(`Acceso denegado: Tu cuenta tiene rol "${profile.role}" y se requiere ser administrador.`);
+      }
+      
+      console.log('Acceso concedido como administrador');
     }
 
     return data;
   };
 
   const signOut = async () => {
+    console.log('Cerrando sesión...');
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };

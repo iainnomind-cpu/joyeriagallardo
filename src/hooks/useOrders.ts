@@ -26,12 +26,16 @@ export function useOrders() {
   }, []);
 
   const createOrder = async (
-    orderData: Omit<Order, 'id' | 'created_at' | 'status'>,
+    orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
     items: CartItem[]
   ) => {
+    // Generate a simple order number
+    const orderNumber = `PED-${Date.now().toString().slice(-6)}`;
+
     const orderToInsert = {
       ...orderData,
-      status: 'pendiente' as const
+      order_number: orderNumber,
+      status: 'pending_payment' as const
     };
 
     const { data: order, error: orderError } = await supabase
@@ -47,10 +51,9 @@ export function useOrders() {
     const orderItems = items.map(item => ({
       order_id: order.id,
       product_id: item.id,
-      codigo: item.codigo,
-      precio: item.precio,
-      cantidad: item.cantidad,
-      categoria: item.categoria_name,
+      unit_price: item.retail_price,
+      quantity: item.cantidad,
+      subtotal: item.retail_price * item.cantidad,
     }));
 
     const { error: itemsError } = await supabase
@@ -61,13 +64,16 @@ export function useOrders() {
       throw new Error(`Error al guardar productos: ${itemsError.message}`);
     }
 
+    // Email notification disabled due to CORS/Server configuration
+    /*
     try {
       await supabase.functions.invoke('send-order-email', {
         body: { orderId: order.id },
       });
     } catch (emailError) {
-      // Email sending is not critical, continue anyway
+      console.warn('Error initiating email:', emailError);
     }
+    */
 
     return order;
   };

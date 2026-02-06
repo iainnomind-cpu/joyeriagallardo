@@ -24,7 +24,7 @@ export function AdminPanel({
   const [deleting, setDeleting] = useState<string | null>(null);
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`¿Eliminar ${product.codigo}?`)) return;
+    if (!confirm(`¿Eliminar ${product.sku}?`)) return;
 
     setDeleting(product.id);
     try {
@@ -38,7 +38,7 @@ export function AdminPanel({
   };
 
   const getProductsByCategory = (categoryId: string) => {
-    return products.filter(p => p.categoria_id === categoryId);
+    return products.filter(p => p.category_id === categoryId);
   };
 
   const getCategoryName = (categoryId: string) => {
@@ -83,10 +83,10 @@ export function AdminPanel({
                       <div key={product.id} className="bg-gray-50 rounded-lg p-4 border-2">
                         <div className="flex gap-3 mb-3">
                           <div className="w-20 h-20 bg-purple-100 rounded-lg flex items-center justify-center overflow-hidden">
-                            {product.imagen_url ? (
+                            {product.image_url ? (
                               <img
-                                src={product.imagen_url}
-                                alt={product.codigo}
+                                src={product.image_url}
+                                alt={product.sku}
                                 className="w-full h-full object-cover"
                               />
                             ) : (
@@ -94,11 +94,11 @@ export function AdminPanel({
                             )}
                           </div>
                           <div className="flex-1">
-                            <h4 className="font-bold">{product.codigo}</h4>
+                            <h4 className="font-bold">{product.sku}</h4>
                             <p className="text-sm text-gray-600 line-clamp-2">
-                              {product.descripcion || 'Sin descripción'}
+                              {product.name || 'Sin descripción'}
                             </p>
-                            <p className="text-lg font-bold text-purple-600">${product.precio}</p>
+                            <p className="text-lg font-bold text-purple-600">${product.retail_price}</p>
                           </div>
                         </div>
                         <div className="flex gap-2">

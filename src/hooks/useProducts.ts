@@ -22,9 +22,12 @@ export function useProducts() {
   };
 
   const fetchProducts = async () => {
+    // Select fields matching the ERP table structure
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('id, sku, name, description, short_description, detailed_description, images, retail_price, image_url, category, total_stock, is_published_online, created_at, updated_at')
+      .eq('is_published_online', true)  // Only show published
+      .gt('total_stock', 0)             // Only show in stock (optional, good for user)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -32,7 +35,15 @@ export function useProducts() {
       return;
     }
 
-    setProducts(data || []);
+    // Map ERP fields to our frontend interface if needed, or use as is
+    // We renamed frontend interface to match, except 'category' -> 'category_id'
+    const mappedData = (data || []).map((p: any) => ({
+      ...p,
+      category_id: p.category, // Map 'category' column to 'category_id' prop
+      // Ensure other fields match
+    }));
+
+    setProducts(mappedData);
   };
 
   useEffect(() => {

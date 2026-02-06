@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ShoppingCart, Search, Settings } from 'lucide-react';
+import { ShoppingCart, Search, Settings, Heart, Menu, Diamond, X } from 'lucide-react';
 import { useAuth } from './hooks/useAuth';
 import { useProducts } from './hooks/useProducts';
 import { useOrders } from './hooks/useOrders';
@@ -9,11 +9,15 @@ import { ProductForm } from './components/ProductForm';
 import { ProductGrid } from './components/ProductGrid';
 import { Cart } from './components/Cart';
 import { Checkout } from './components/Checkout';
+import { ProductDetailModal } from './components/ProductDetailModal';
+import { Hero } from './components/Hero';
+import { TrustBar } from './components/TrustBar';
+import { Footer } from './components/Footer';
 import { deleteProductImage } from './lib/supabase';
 import { Product, CartItem, OrderFormData } from './types';
 
 function App() {
-  const { user, signIn, signOut, isAuthenticated } = useAuth();
+  const { signIn, signOut, isAuthenticated } = useAuth();
   const { products, categories, loading: productsLoading, addProduct, updateProduct, deleteProduct } = useProducts();
   const { createOrder } = useOrders();
 
@@ -25,6 +29,15 @@ function App() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [showProductForm, setShowProductForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | undefined>();
+  const [detailedProduct, setDetailedProduct] = useState<Product | undefined>();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Scroll effect for navbar
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     if (categories.length > 0 && !activeCategory) {
@@ -35,13 +48,13 @@ function App() {
   const activeCategoryId = categories.find(c => c.name === activeCategory)?.id;
 
   const filteredProducts = useMemo(() => {
-    let filtered = products.filter(p => p.categoria_id === activeCategoryId);
+    let filtered = products.filter(p => p.category_id === activeCategoryId);
 
     if (searchTerm) {
       filtered = filtered.filter(
         p =>
-          p.codigo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (p.descripcion && p.descripcion.toLowerCase().includes(searchTerm.toLowerCase()))
+          p.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (p.name && p.name.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -49,7 +62,7 @@ function App() {
   }, [products, activeCategoryId, searchTerm]);
 
   const addToCart = (product: Product) => {
-    const categoryName = categories.find(c => c.id === product.categoria_id)?.name || '';
+    const categoryName = categories.find(c => c.id === product.category_id)?.name || '';
     const existing = cart.find(item => item.id === product.id);
 
     if (existing) {
@@ -61,6 +74,7 @@ function App() {
     } else {
       setCart([...cart, { ...product, cantidad: 1, categoria_name: categoryName }]);
     }
+    setShowCart(true); // Open cart immediately for feedback
   };
 
   const updateQuantity = (productId: string, delta: number) => {
@@ -79,7 +93,7 @@ function App() {
     setCart(cart.filter(item => item.id !== productId));
   };
 
-  const total = cart.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+  const total = cart.reduce((sum, item) => sum + item.retail_price * item.cantidad, 0);
 
   const handleCheckout = () => {
     setShowCart(false);
@@ -106,8 +120,13 @@ function App() {
     setCart([]);
   };
 
+  // ... Admin handlers (same as before)
   const handleAdminLogin = async (email: string, password: string) => {
-    await signIn(email, password);
+    try {
+      await signIn(email, password);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const handleLogout = async () => {
@@ -136,9 +155,9 @@ function App() {
   };
 
   const handleDeleteProduct = async (product: Product) => {
-    if (product.imagen_url) {
+    if (product.image_url) {
       try {
-        await deleteProductImage(product.imagen_url);
+        await deleteProductImage(product.image_url);
       } catch (error) {
         console.error('Error deleting image:', error);
       }
@@ -148,98 +167,124 @@ function App() {
 
   if (productsLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-6xl mb-4">💎</div>
-          <p className="text-xl text-gray-600">Cargando catálogo...</p>
+          <div className="text-6xl mb-4 text-amber-600 animate-pulse">
+            <Diamond size={64} />
+          </div>
+          <p className="text-xl text-stone-600 font-serif">Cargando experiencia...</p>
         </div>
       </div>
     );
   }
 
-  if (categories.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">No hay categorías disponibles</p>
+  // Navbar Component (Inline for simple state access)
+  const Navbar = () => (
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-3' : 'bg-transparent py-5'}`}>
+      <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
+
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          {!isScrolled && <div className="text-white bg-stone-900 p-1.5 rounded-full"><Diamond size={24} /></div>}
+          <div>
+            <h1 className={`text-2xl font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
+              Joyería Gallardo
+            </h1>
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex items-center gap-4">
+          {/* Admin Trigger (Secret) */}
+          <button
+            onClick={() => setShowAdmin(true)}
+            className={`p-2 rounded-full transition-colors ${isScrolled ? 'text-stone-400 hover:text-stone-800' : 'text-white/70 hover:text-white'}`}
+          >
+            <Settings size={20} />
+          </button>
+
+          <button
+            onClick={() => setShowCart(true)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all ${isScrolled ? 'bg-stone-900 text-white hover:bg-stone-800' : 'bg-white text-stone-900 hover:bg-stone-100'}`}
+          >
+            <ShoppingCart size={18} />
+            <span className="hidden md:inline">Carrito</span>
+            {cart.length > 0 && (
+              <span className="ml-1 bg-amber-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                {cart.reduce((s, i) => s + i.cantidad, 0)}
+              </span>
+            )}
+          </button>
         </div>
       </div>
-    );
-  }
-
-  if (!activeCategory && categories.length > 0) {
-    setActiveCategory(categories[0].name);
-  }
+    </nav>
+  );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-purple-50">
-      <div className="bg-white shadow-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-purple-900">Perlas AC</h1>
-            <p className="text-sm text-gray-600">Catálogo de Joyería</p>
+    <div className="min-h-screen bg-white font-sans text-stone-800 selection:bg-amber-100">
+
+      <Navbar />
+
+      <Hero />
+
+      <TrustBar />
+
+      <main id="collection" className="max-w-7xl mx-auto px-4 py-16">
+
+        {/* Section Header */}
+        <div className="text-center mb-12">
+          <span className="text-amber-600 font-medium tracking-widest uppercase text-xs mb-2 block">Explora nuestra</span>
+          <h2 className="text-4xl font-serif font-bold text-stone-900">Colección Exclusiva</h2>
+          <div className="w-24 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
+        </div>
+
+        {/* Controls: Category & Search */}
+        <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm py-4 mb-8 border-b border-stone-100 flex flex-col md:flex-row gap-4 items-center justify-between transition-all">
+
+          {/* Categories */}
+          <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 no-scrollbar">
+            {categories.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => setActiveCategory(cat.name)}
+                className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${activeCategory === cat.name
+                    ? 'bg-stone-900 text-white border-stone-900 shadow-lg transform scale-105'
+                    : 'bg-white text-stone-500 border-stone-200 hover:border-stone-400 hover:text-stone-800'
+                  }`}
+              >
+                {cat.name}
+              </button>
+            ))}
           </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowAdmin(true)}
-              className="bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700"
-            >
-              <Settings size={24} />
-            </button>
-            <button
-              onClick={() => setShowCart(!showCart)}
-              className="relative bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700"
-            >
-              <ShoppingCart size={24} />
-              {cart.length > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold">
-                  {cart.reduce((sum, item) => sum + item.cantidad, 0)}
-                </span>
-              )}
-            </button>
+
+          {/* Search */}
+          <div className="relative w-full md:w-64 group">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 group-focus-within:text-amber-500 transition-colors" size={18} />
+            <input
+              type="text"
+              placeholder="Buscar joya..."
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-full border border-stone-200 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all text-sm"
+            />
           </div>
         </div>
-      </div>
 
-      <div className="bg-white border-b sticky top-[72px] z-30">
-        <div className="max-w-7xl mx-auto px-4 flex gap-2 overflow-x-auto py-3">
-          {categories.map(cat => (
-            <button
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.name)}
-              className={`px-6 py-2 rounded-full font-semibold whitespace-nowrap ${
-                activeCategory === cat.name
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {cat.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-4">
-        <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-          <input
-            type="text"
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 focus:outline-none"
+        {/* Product Grid */}
+        <div className="min-h-[400px]">
+          <ProductGrid
+            products={filteredProducts}
+            onAddToCart={addToCart}
+            onProductClick={setDetailedProduct}
           />
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 pb-6">
-        <ProductGrid products={filteredProducts} onAddToCart={addToCart} />
-      </div>
+      </main>
 
-      {showCart && !showCheckout && (
+      <Footer />
+
+      {/* Modals & Overlays */}
+      {showCart && (
         <Cart
           items={cart}
           onClose={() => setShowCart(false)}
@@ -255,6 +300,14 @@ function App() {
           items={cart}
           onSubmit={handleSubmitOrder}
           onCancel={() => setShowCheckout(false)}
+        />
+      )}
+
+      {detailedProduct && (
+        <ProductDetailModal
+          product={detailedProduct}
+          onClose={() => setDetailedProduct(undefined)}
+          onAddToCart={addToCart}
         />
       )}
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, AlertCircle, ArrowLeft } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Diamond } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 
 const MAX_ATTEMPTS = 5;
@@ -97,7 +97,12 @@ export function AdminLoginPage() {
         localStorage.setItem('admin_lockout_until', lockoutTime.toString());
         setError(`Demasiados intentos fallidos. Bloqueado por ${LOCKOUT_DURATION / 60000} minutos.`);
       } else {
-        setError(`Credenciales incorrectas. Intentos restantes: ${MAX_ATTEMPTS - newAttempts}`);
+        const message = err instanceof Error ? err.message : 'Credenciales incorrectas';
+        if (message.includes('Invalid login credentials') || message.includes('Email not confirmed')) {
+          setError(`Credenciales incorrectas. Intentos restantes: ${MAX_ATTEMPTS - newAttempts}`);
+        } else {
+          setError(message);
+        }
       }
     } finally {
       setLoading(false);
@@ -107,41 +112,42 @@ export function AdminLoginPage() {
   const isLocked = lockedUntil && lockedUntil > Date.now();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-stone-900 flex items-center justify-center p-4">
       <button
         onClick={() => navigate('/')}
-        className="absolute top-4 left-4 text-gray-500 hover:text-gray-700 transition-colors"
+        className="absolute top-4 left-4 text-stone-500 hover:text-stone-300 transition-colors flex items-center gap-2"
         title="Volver a la tienda"
       >
-        <ArrowLeft size={24} />
+        <ArrowLeft size={20} />
+        <span className="text-sm font-medium">Volver a la tienda</span>
       </button>
 
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-        <div className="bg-gradient-to-r from-pink-500 to-blue-600 p-8 text-white">
-          <div className="flex items-center justify-center mb-4">
-            <Lock size={48} />
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="bg-stone-100 p-8 border-b border-stone-200 text-center">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-sm mb-4 text-amber-600">
+            <Diamond size={24} />
           </div>
-          <h1 className="text-3xl font-bold text-center">Perlas AC</h1>
-          <p className="text-center text-pink-100 mt-2">Panel de Administración</p>
+          <h1 className="text-2xl font-serif text-stone-900">Joyería Gallardo</h1>
+          <p className="text-stone-500 text-sm mt-1">Panel de Administración</p>
         </div>
 
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
-              Email
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">
+              Email Corporativo
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLocked || loading}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg outline-none focus:border-pink-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded text-stone-900 outline-none focus:border-stone-400 focus:bg-white transition-all disabled:opacity-50"
               placeholder="admin@gallardojoyeria.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">
+            <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2">
               Contraseña
             </label>
             <input
@@ -149,14 +155,14 @@ export function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLocked || loading}
-              className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg outline-none focus:border-pink-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+              className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded text-stone-900 outline-none focus:border-stone-400 focus:bg-white transition-all disabled:opacity-50"
               placeholder="••••••••"
             />
           </div>
 
           {error && (
-            <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
-              <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+            <div className="bg-red-50 border border-red-100 rounded p-4 flex items-start gap-3">
+              <AlertCircle className="text-red-800 flex-shrink-0 mt-0.5" size={16} />
               <p className="text-sm text-red-800">{error}</p>
             </div>
           )}
@@ -164,13 +170,13 @@ export function AdminLoginPage() {
           <button
             type="submit"
             disabled={isLocked || loading}
-            className="w-full bg-gradient-to-r from-pink-500 to-blue-600 text-white py-4 rounded-lg font-bold text-lg hover:from-pink-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="w-full bg-stone-900 text-white py-4 rounded font-medium tracking-wide hover:bg-stone-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl"
           >
             {loading ? 'Verificando...' : isLocked ? `Bloqueado (${getRemainingLockoutTime()})` : 'Iniciar Sesión'}
           </button>
 
           {attempts > 0 && attempts < MAX_ATTEMPTS && !isLocked && (
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-xs text-stone-400">
               Intentos fallidos: {attempts}/{MAX_ATTEMPTS}
             </p>
           )}
@@ -179,3 +185,4 @@ export function AdminLoginPage() {
     </div>
   );
 }
+

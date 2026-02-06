@@ -12,11 +12,11 @@ interface ProductFormProps {
 
 export function ProductForm({ product, categories, onClose, onSave }: ProductFormProps) {
   const [formData, setFormData] = useState({
-    codigo: product?.codigo || '',
-    precio: product?.precio.toString() || '',
-    categoria_id: product?.categoria_id || categories[0]?.id || '',
-    imagen_url: product?.imagen_url || '',
-    descripcion: product?.descripcion || '',
+    sku: product?.sku || '',
+    retail_price: product?.retail_price.toString() || '',
+    category_id: product?.category_id || categories[0]?.id || '',
+    image_url: product?.image_url || '',
+    name: product?.name || '',
   });
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -30,7 +30,7 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
     setUploadError('');
     try {
       const imageUrl = await uploadProductImage(file);
-      setFormData(prev => ({ ...prev, imagen_url: imageUrl }));
+      setFormData(prev => ({ ...prev, image_url: imageUrl }));
     } catch (error) {
       console.error('Error uploading image:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error al subir la imagen';
@@ -42,19 +42,19 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
   };
 
   const handleSubmit = async () => {
-    if (!formData.codigo || !formData.precio || !formData.categoria_id) {
-      alert('Código, precio y categoría son obligatorios');
+    if (!formData.sku || !formData.retail_price || !formData.category_id) {
+      alert('Código (SKU), precio y categoría son obligatorios');
       return;
     }
 
     setSaving(true);
     try {
       await onSave({
-        codigo: formData.codigo,
-        precio: parseFloat(formData.precio),
-        categoria_id: formData.categoria_id,
-        imagen_url: formData.imagen_url,
-        descripcion: formData.descripcion,
+        sku: formData.sku,
+        retail_price: parseFloat(formData.retail_price),
+        category_id: formData.category_id,
+        image_url: formData.image_url,
+        name: formData.name,
       });
       onClose();
     } catch (error) {
@@ -77,11 +77,11 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
           <div className="p-6 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-bold mb-2">Código *</label>
+                <label className="block text-sm font-bold mb-2">Código (SKU) *</label>
                 <input
                   type="text"
-                  value={formData.codigo}
-                  onChange={(e) => setFormData({ ...formData, codigo: e.target.value })}
+                  value={formData.sku}
+                  onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
                   className="w-full px-4 py-3 border-2 rounded-lg outline-none focus:border-purple-500"
                 />
               </div>
@@ -89,8 +89,8 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
                 <label className="block text-sm font-bold mb-2">Precio *</label>
                 <input
                   type="number"
-                  value={formData.precio}
-                  onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
+                  value={formData.retail_price}
+                  onChange={(e) => setFormData({ ...formData, retail_price: e.target.value })}
                   className="w-full px-4 py-3 border-2 rounded-lg outline-none focus:border-purple-500"
                 />
               </div>
@@ -98,8 +98,8 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
             <div>
               <label className="block text-sm font-bold mb-2">Categoría *</label>
               <select
-                value={formData.categoria_id}
-                onChange={(e) => setFormData({ ...formData, categoria_id: e.target.value })}
+                value={formData.category_id}
+                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
                 className="w-full px-4 py-3 border-2 rounded-lg outline-none focus:border-purple-500"
               >
                 {categories.map(cat => (
@@ -110,11 +110,11 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
               </select>
             </div>
             <div>
-              <label className="block text-sm font-bold mb-2">Descripción</label>
+              <label className="block text-sm font-bold mb-2">Nombre/Descripción</label>
               <textarea
-                value={formData.descripcion}
+                value={formData.name}
                 rows={3}
-                onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-3 border-2 rounded-lg outline-none focus:border-purple-500"
               />
             </div>
@@ -139,11 +139,11 @@ export function ProductForm({ product, categories, onClose, onSave }: ProductFor
               {uploadError && (
                 <p className="text-sm text-red-600 mt-2">{uploadError}</p>
               )}
-              {formData.imagen_url && (
+              {formData.image_url && (
                 <div className="mt-3">
                   <p className="text-xs text-green-600 mb-2">Imagen cargada correctamente</p>
                   <img
-                    src={formData.imagen_url}
+                    src={formData.image_url}
                     alt="Preview"
                     className="w-32 h-32 object-cover rounded-lg border-2 border-green-200"
                   />
