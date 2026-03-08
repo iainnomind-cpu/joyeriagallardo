@@ -1,30 +1,24 @@
 import { useState } from 'react';
-import { User, Home, Store, CheckCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { User, Home, Store, CheckCircle, ArrowLeft, ShieldCheck, Copy, Info } from 'lucide-react';
 import { OrderFormData, CartItem } from '../types';
+import { useOrders } from '../hooks/useOrders';
 
 interface CheckoutProps {
   total: number;
   items: CartItem[];
-  onSubmit: (formData: OrderFormData) => Promise<void>;
+  onSubmit: (formData: OrderFormData) => Promise<any>;
   onCancel: () => void;
 }
 
 export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
   const [orderComplete, setOrderComplete] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [formData, setFormData] = useState<OrderFormData>({
-    nombre: '',
-    telefono: '',
-    tipoEntrega: 'recoger',
-    calle: '',
-    numeroExterior: '',
-    numeroInterior: '',
-    colonia: '',
-    ciudad: '',
-    estado: '',
-    codigoPostal: '',
-    referencias: '',
-  });
+  const [completedOrder, setCompletedOrder] = useState<any>(null);
+  const [bankDetails, setBankDetails] = useState<any>(null);
+  const { getBankDetails } = useOrders();
+
+  useEffect(() => {
+    getBankDetails().then(details => setBankDetails(details));
+  }, []);
 
   const handleSubmit = async () => {
     if (!formData.nombre.trim() || !formData.telefono.trim()) {
@@ -41,11 +35,15 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
 
     setSubmitting(true);
     try {
-      await onSubmit(formData);
+      const order = await onSubmit(formData);
+      setCompletedOrder(order);
       setOrderComplete(true);
-      setTimeout(() => {
-        onCancel();
-      }, 5000);
+
+      if (formData.tipoEntrega !== 'envio') {
+        setTimeout(() => {
+          onCancel();
+        }, 5000);
+      }
     } catch (error) {
       console.error('Error submitting order:', error);
       alert('Error al procesar el pedido. Por favor intenta de nuevo.');
@@ -55,6 +53,113 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
   };
 
   if (orderComplete) {
+    if (formData.tipoEntrega === 'envio') {
+      return (
+        <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto flex items-center justify-center p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div className="p-8 md:p-12">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2">Ficha de Pago</h2>
+                <p className="text-stone-500">Transfiere el monto total para procesar tu pedido.</p>
+              </div>
+
+              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-bl-lg">
+                  {completedOrder?.order_number}
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Total a transferir</p>
+                    <p className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</p>
+                  </div>
+
+                  <div className="h-px bg-stone-200 my-4"></div>
+
+                  {bankDetails ? (
+                    <>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Banco</p>
+                          <p className="font-medium text-stone-900">{bankDetails.bank}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Titular</p>
+                          <p className="font-medium text-stone-900">{bankDetails.accountHolder}</p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
+                          CLABE Interbancaria
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(bankDetails.clabe);
+                              alert('CLABE copiada al portapapeles');
+                            }}
+                            className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
+                          >
+                            <Copy size={12} /> Copiar
+                          </button>
+                        </p>
+                        <p className="font-mono text-lg text-stone-900 tracking-wider bg-white p-2 border rounded-lg text-center mt-1">
+                          {bankDetails.clabe}
+                        </p>
+                      </div>
+
+                      {bankDetails.cardNumber && (
+                        <div>
+                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
+                            Número de Tarjeta
+                          </p>
+                          <p className="font-mono text-lg text-stone-900 tracking-wider bg-white p-2 border rounded-lg text-center mt-1">
+                            {bankDetails.cardNumber}
+                          </p>
+                        </div>
+                      )}
+
+                      <div>
+                        <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
+                          Concepto de Pago (IMPORTANTE)
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(completedOrder?.order_number || '');
+                              alert('Concepto copiado al portapapeles');
+                            }}
+                            className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
+                          >
+                            <Copy size={12} /> Copiar
+                          </button>
+                        </p>
+                        <p className="font-mono text-lg text-amber-700 font-bold tracking-wider bg-amber-50 p-2 border border-amber-200 rounded-lg text-center mt-1">
+                          {completedOrder?.order_number}
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <p className="text-sm text-stone-500 text-center py-4">No hay datos bancarios configurados. Por favor contacta al soporte.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm mb-8 flex items-start gap-3">
+                <Info className="shrink-0 mt-0.5" size={18} />
+                <p>
+                  {bankDetails?.instructions || 'Una vez realizada la transferencia, tu pedido será preparado y enviado.'}
+                  <br /><br /><strong>Asegúrate de copiar tu concepto de pago.</strong>
+                </p>
+              </div>
+
+              <button onClick={onCancel} className="w-full bg-stone-900 text-white py-4 rounded-full font-bold hover:bg-stone-800 transition-all text-lg shadow-lg">
+                Entendido, volver a la tienda
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto flex items-center justify-center p-4 backdrop-blur-sm">
         <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-fade-in-up">
@@ -167,8 +272,8 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                   <button
                     onClick={() => setFormData({ ...formData, tipoEntrega: 'recoger' })}
                     className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'recoger'
-                        ? 'border-stone-900 bg-stone-50 text-stone-900'
-                        : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                      ? 'border-stone-900 bg-stone-50 text-stone-900'
+                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
                       }`}
                   >
                     <Store size={24} />
@@ -177,8 +282,8 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                   <button
                     onClick={() => setFormData({ ...formData, tipoEntrega: 'envio' })}
                     className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'envio'
-                        ? 'border-stone-900 bg-stone-50 text-stone-900'
-                        : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                      ? 'border-stone-900 bg-stone-50 text-stone-900'
+                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
                       }`}
                   >
                     <Home size={24} />

@@ -100,12 +100,24 @@ export function useOrders() {
     return data;
   };
 
+  const getBankDetails = async () => {
+    const { data, error } = await supabase
+      .from('business_rules')
+      .select('rule_value')
+      .eq('rule_key', 'bank_transfer_details')
+      .single();
+
+    if (error || !data) return null;
+    return data.rule_value;
+  };
+
   return {
     orders,
     loading,
     createOrder,
     getOrderItems,
     updateOrderStatus,
+    getBankDetails,
     refetch: fetchOrders,
   };
 }

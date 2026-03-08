@@ -11,14 +11,14 @@ export function Hero() {
 
             <div className="relative h-full max-w-7xl mx-auto px-4 flex flex-col justify-center items-start text-white pt-20">
                 <span className="text-amber-400 font-medium tracking-[0.2em] uppercase text-xs mb-2 animate-fade-in-up">
-                    Nueva Colección 2024
+                    Chapa de Oro 14K y Plata Nacional
                 </span>
                 <h1 className="text-4xl md:text-6xl font-serif font-bold mb-4 leading-tight max-w-3xl animate-fade-in-up delay-100">
-                    Elegancia que <br />
-                    Perdura
+                    Joyería Artesanal<br />
+                    Nacional
                 </h1>
                 <p className="text-stone-300 text-base md:text-lg max-w-xl mb-6 font-light leading-relaxed animate-fade-in-up delay-200 hidden md:block">
-                    Descubre piezas únicas diseñadas para resaltar tu belleza interior.
+                    Precios de mayoreo a partir de 3 piezas. Calidad garantizada con respaldo y seguimiento.
                 </p>
 
                 <button

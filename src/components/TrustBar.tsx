@@ -1,26 +1,26 @@
-import { ShieldCheck, Truck, CreditCard, Award } from 'lucide-react';
+import { ShieldCheck, Package, Gem, Award } from 'lucide-react';
 
 export function TrustBar() {
     const benefits = [
         {
             icon: <Award className="text-amber-600" size={32} />,
-            title: "Calidad Certificada",
-            desc: "Autenticidad garantizada"
+            title: "Artesanal Nacional",
+            desc: "Joyería hecha en México"
         },
         {
-            icon: <Truck className="text-amber-600" size={32} />,
-            title: "Envío Seguro",
-            desc: "A todo México asegurado"
+            icon: <Package className="text-amber-600" size={32} />,
+            title: "Mayoreo desde 3 Pzas",
+            desc: "Precios especiales al mayoreo"
         },
         {
             icon: <ShieldCheck className="text-amber-600" size={32} />,
-            title: "Compra Protegida",
-            desc: "Garantía de satisfacción"
+            title: "Garantía Respaldada",
+            desc: "Seguimiento post-compra"
         },
         {
-            icon: <CreditCard className="text-amber-600" size={32} />,
-            title: "Pagos Flexibles",
-            desc: "Hasta 12 meses sin intereses"
+            icon: <Gem className="text-amber-600" size={32} />,
+            title: "Baño de Oro Propio",
+            desc: "Chapa de oro 14K y Plata"
         }
     ];
 

@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Phone, Mail, MapPin } from 'lucide-react';
+import { Facebook, Instagram, Phone, Mail, MapPin, Clock } from 'lucide-react';
 
 export function Footer() {
     return (
@@ -8,25 +8,40 @@ export function Footer() {
 
                     {/* Brand */}
                     <div>
-                        <h3 className="text-2xl font-serif text-white mb-6">Joyería Gallardo</h3>
+                        <div className="flex items-center gap-3 mb-6">
+                            <img src="/logo.png" alt="Joyería Gallardo" className="h-20 w-20 object-contain" />
+                            <h3 className="text-xl font-serif text-white">Joyería Gallardo</h3>
+                        </div>
                         <p className="leading-relaxed mb-6">
-                            Creando momentos inolvidables a través de la joyería fina desde 1990.
-                            Calidad, confianza y distinción en cada pieza.
+                            Joyería en chapa de oro de 14k Nacional y Plata Nacional.
+                            Calidad artesanal, garantía y respaldo en cada pieza.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="text-white hover:text-amber-500 transition-colors"><Facebook /></a>
-                            <a href="#" className="text-white hover:text-amber-500 transition-colors"><Instagram /></a>
+                            <a href="https://www.facebook.com/share/1CTCwZagsp/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-amber-500 transition-colors"><Facebook /></a>
+                            <a href="https://www.instagram.com/joyasgallardo?igsh=N3dkend1emo2NTNn" target="_blank" rel="noopener noreferrer" className="text-white hover:text-amber-500 transition-colors"><Instagram /></a>
                         </div>
                     </div>
 
-                    {/* Links */}
+                    {/* Info */}
                     <div>
-                        <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-sm">Enlaces Rápidos</h4>
+                        <h4 className="text-white font-bold mb-6 uppercase tracking-widest text-sm">Información</h4>
                         <ul className="space-y-3">
-                            <li><a href="#" className="hover:text-white transition-colors">Colecciones</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Sobre Nosotros</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Guía de Tallas</a></li>
-                            <li><a href="#" className="hover:text-white transition-colors">Política de Envíos</a></li>
+                            <li className="flex items-start gap-3">
+                                <Clock className="text-amber-500 shrink-0 mt-0.5" size={16} />
+                                <div>
+                                    <span className="text-white text-sm font-medium">Horario</span>
+                                    <p className="text-sm">Lun – Vie: 9:00 AM – 6:00 PM</p>
+                                    <p className="text-sm">Sábados: 9:00 AM – 3:00 PM</p>
+                                </div>
+                            </li>
+                            <li className="mt-4">
+                                <span className="text-white text-sm font-medium">Compras de Mayoreo</span>
+                                <p className="text-sm">A partir de 3 piezas ya cuentas con precio de mayoreo.</p>
+                            </li>
+                            <li className="mt-4">
+                                <span className="text-white text-sm font-medium">Garantía</span>
+                                <p className="text-sm">Garantizamos la mercancía. Joyería artesanal nacional con baño de oro. Te respaldamos con seguimiento después de tu compra.</p>
+                            </li>
                         </ul>
                     </div>
 
@@ -36,15 +51,18 @@ export function Footer() {
                         <div className="space-y-4">
                             <div className="flex items-start gap-4">
                                 <MapPin className="text-amber-500 shrink-0" size={20} />
-                                <span>Pedro Moreno 123, Col. Centro<br />Guadalajara, Jal.</span>
+                                <span>Paseo del Hospicio #65,<br />Locales A, B.<br />Guadalajara Centro</span>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Phone className="text-amber-500 shrink-0" size={20} />
-                                <span>(33) 1234 5678</span>
+                                <div>
+                                    <a href="tel:3330437902" className="hover:text-white transition-colors block">33 3043 7902</a>
+                                    <a href="tel:3320573191" className="hover:text-white transition-colors block">33 2057 3191</a>
+                                </div>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Mail className="text-amber-500 shrink-0" size={20} />
-                                <span>contacto@joyeriagallardo.com</span>
+                                <a href="mailto:gallardojoyasmx@gmail.com" className="hover:text-white transition-colors">gallardojoyasmx@gmail.com</a>
                             </div>
                         </div>
                     </div>

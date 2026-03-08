@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ShoppingCart, Search, Settings, Heart, Menu, Diamond, X } from 'lucide-react';
+import { ShoppingCart, Search, Settings } from 'lucide-react';
 import { useAuth } from './hooks/useAuth';
 import { useProducts } from './hooks/useProducts';
 import { useOrders } from './hooks/useOrders';
@@ -170,7 +170,7 @@ function App() {
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 text-amber-600 animate-pulse">
-            <Diamond size={64} />
+            <img src="/logo.png" alt="Joyería Gallardo" className="h-16 w-16 object-contain" />
           </div>
           <p className="text-xl text-stone-600 font-serif">Cargando experiencia...</p>
         </div>
@@ -180,14 +180,14 @@ function App() {
 
   // Navbar Component (Inline for simple state access)
   const Navbar = () => (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-3' : 'bg-transparent py-5'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/60 backdrop-blur-xl shadow-lg border-b border-white/30 py-3' : 'bg-transparent py-5'}`}>
       <div className="max-w-7xl mx-auto px-4 flex items-center justify-between">
 
         {/* Logo */}
         <div className="flex items-center gap-2">
-          {!isScrolled && <div className="text-white bg-stone-900 p-1.5 rounded-full"><Diamond size={24} /></div>}
+          <img src="/logo.png" alt="Joyería Gallardo" className={`h-20 w-20 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
           <div>
-            <h1 className={`text-2xl font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
+            <h1 className={`text-lg font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
               Joyería Gallardo
             </h1>
           </div>
@@ -248,8 +248,8 @@ function App() {
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.name)}
                 className={`px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all border ${activeCategory === cat.name
-                    ? 'bg-stone-900 text-white border-stone-900 shadow-lg transform scale-105'
-                    : 'bg-white text-stone-500 border-stone-200 hover:border-stone-400 hover:text-stone-800'
+                  ? 'bg-stone-900 text-white border-stone-900 shadow-lg transform scale-105'
+                  : 'bg-white text-stone-500 border-stone-200 hover:border-stone-400 hover:text-stone-800'
                   }`}
               >
                 {cat.name}

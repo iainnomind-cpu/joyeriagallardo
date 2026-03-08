@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Search, Diamond } from 'lucide-react';
+import { ShoppingCart, Search } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
 import { useOrders } from '../hooks/useOrders';
 import { ProductGrid } from '../components/ProductGrid';
@@ -124,12 +124,13 @@ export function Storefront() {
     };
 
     try {
-      await createOrder(orderData, cart);
+      const order = await createOrder(orderData, cart);
       setCart([]);
-      // Success handled inside createOrder or component
+      return order;
     } catch (err) {
       console.error(err);
       alert('Hubo un error al procesar tu pedido. Intenta nuevamente.');
+      throw err;
     }
   };
 
@@ -138,7 +139,7 @@ export function Storefront() {
       <div className="min-h-screen bg-stone-50 flex items-center justify-center">
         <div className="text-center">
           <div className="text-6xl mb-4 text-amber-600 animate-pulse">
-            <Diamond size={64} strokeWidth={1} />
+            <img src="/logo.png" alt="Joyería Gallardo" className="h-16 w-16 object-contain" />
           </div>
           <p className="text-xl text-stone-600 font-serif tracking-wide">Cargando colección...</p>
         </div>
@@ -148,14 +149,14 @@ export function Storefront() {
 
   // Navbar Component
   const Navbar = () => (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md py-3' : 'bg-transparent py-4'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/60 backdrop-blur-xl shadow-lg border-b border-white/30 py-3' : 'bg-transparent py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-y-3 gap-x-4">
 
         {/* Logo */}
         <div className="flex items-center gap-2 order-1">
-          {!isScrolled && <div className="text-white bg-stone-900 p-1.5 rounded-full"><Diamond size={20} /></div>}
+          <img src="/logo.png" alt="Joyería Gallardo" className={`h-20 w-20 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
           <div>
-            <h1 className={`text-xl md:text-2xl font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
+            <h1 className={`text-base md:text-lg font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
               Joyería Gallardo
             </h1>
           </div>
