@@ -105,7 +105,7 @@ export function Storefront() {
   const handleSubmitOrder = async (formData: OrderFormData) => {
     // 1. Format Address
     const addressString = formData.tipoEntrega === 'envio'
-      ? `${formData.calle} #${formData.numeroExterior} ${formData.numeroInterior ? 'Int. ' + formData.numeroInterior : ''}, Col. ${formData.colonia}, ${formData.ciudad}, ${formData.estado}, CP ${formData.codigoPostal}. Ref: ${formData.referencias}`
+      ? `${formData.calle} ${formData.numeroExterior ? '#' + formData.numeroExterior : ''} ${formData.numeroInterior ? 'Int. ' + formData.numeroInterior : ''}, Col. ${formData.colonia}, ${formData.ciudad}, ${formData.estado}, CP ${formData.codigoPostal}. Ref: ${formData.referencias || 'Ninguna'}`.replace(/ +/g, ' ').replace(/ ,/g, ',')
       : 'Recoger en Tienda';
 
     // 2. Format Notes with Contact Info

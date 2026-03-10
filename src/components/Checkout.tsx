@@ -41,7 +41,7 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
     }
 
     if (formData.tipoEntrega === 'envio') {
-      if (!formData.calle || !formData.numeroExterior || !formData.colonia || !formData.ciudad || !formData.estado) {
+      if (!formData.calle || !formData.colonia || !formData.ciudad || !formData.estado || !formData.codigoPostal) {
         alert('Por favor completa todos los campos de dirección');
         return;
       }
