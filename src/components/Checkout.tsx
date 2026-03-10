@@ -86,7 +86,7 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                 <div className="space-y-4">
                   <div>
                     <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Total a transferir</p>
-                    <p className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</p>
+                    <p className="text-3xl font-serif font-bold text-stone-900">${(completedOrder?.total || total).toLocaleString('es-MX')}</p>
                   </div>
 
                   <div className="h-px bg-stone-200 my-4"></div>
