@@ -223,7 +223,7 @@ export function Storefront() {
         </div>
 
         {/* Categories - Centered */}
-        <div className="sticky top-[72px] z-40 bg-white/95 backdrop-blur-sm py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
+        <div className="sticky top-[104px] md:top-[112px] z-40 bg-white/95 backdrop-blur-sm py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
           <div className="flex gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 no-scrollbar px-4">
             {categories.map(cat => (
               <button
