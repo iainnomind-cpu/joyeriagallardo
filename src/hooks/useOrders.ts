@@ -42,6 +42,16 @@ export function useOrders() {
 
       if (existingCustomer) {
         customerId = existingCustomer.id;
+
+        // Update the customer with the latest name and email from the checkout
+        await supabase
+          .from('customers')
+          .update({
+            name: customerData.name,
+            email: (orderData as any).email || null
+          })
+          .eq('id', customerId);
+
       } else {
         // Create new customer
         const { data: newCustomer, error: customerError } = await supabase
@@ -49,6 +59,7 @@ export function useOrders() {
           .insert([{
             name: customerData.name,
             phone: customerData.phone,
+            email: (orderData as any).email || null,
             source: 'online',
             material_preference: 'unspecified'
           }])

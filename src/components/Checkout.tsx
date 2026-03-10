@@ -6,11 +6,19 @@ import { useOrders } from '../hooks/useOrders';
 interface CheckoutProps {
   total: number;
   items: CartItem[];
+  cartTotals: {
+    subtotal: number;
+    subtotalCalc: number;
+    extraDiscountAmount: number;
+    total: number;
+    isWholesale: boolean;
+    wholesaleConfig: any;
+  };
   onSubmit: (formData: OrderFormData) => Promise<any>;
   onCancel: () => void;
 }
 
-export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
+export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: CheckoutProps) {
   const [orderComplete, setOrderComplete] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
   const [bankDetails, setBankDetails] = useState<any>(null);
@@ -18,6 +26,7 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
   const [formData, setFormData] = useState<OrderFormData>({
     nombre: '',
     telefono: '',
+    email: '',
     tipoEntrega: 'recoger',
     calle: '',
     numeroExterior: '',
@@ -43,6 +52,10 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
     if (formData.tipoEntrega === 'envio') {
       if (!formData.calle || !formData.colonia || !formData.ciudad || !formData.estado || !formData.codigoPostal) {
         alert('Por favor completa todos los campos de dirección');
+        return;
+      }
+      if (!formData.email.trim() || !formData.email.includes('@')) {
+        alert('Por favor ingresa un correo electrónico válido para el envío');
         return;
       }
     }
@@ -71,11 +84,16 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
       return (
         <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto flex items-center justify-center p-4 backdrop-blur-sm">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-green-600"></div>
             <div className="p-8 md:p-12">
               <div className="text-center mb-8">
-                <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2">Ficha de Pago</h2>
-                <p className="text-stone-500">Transfiere el monto total para procesar tu pedido.</p>
+                <div className="flex justify-center mb-4">
+                  <div className="bg-green-50 p-3 rounded-full">
+                    <CheckCircle size={48} className="text-green-600" />
+                  </div>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2">¡Pedido Creado con Éxito!</h2>
+                <p className="text-stone-500">Tu pedido ha sido registrado en nuestro sistema. Para procesar tu envío, por favor transfiere el monto total a la siguiente cuenta.</p>
               </div>
 
               <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
@@ -157,11 +175,11 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                 </div>
               </div>
 
-              <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm mb-8 flex items-start gap-3">
+              <div className="bg-green-50 text-green-800 p-4 rounded-xl text-sm mb-8 flex items-start gap-3 border border-green-100">
                 <Info className="shrink-0 mt-0.5" size={18} />
                 <p>
-                  {bankDetails?.instructions || 'Una vez realizada la transferencia, tu pedido será preparado y enviado.'}
-                  <br /><br /><strong>Asegúrate de copiar tu concepto de pago.</strong>
+                  {bankDetails?.instructions || 'Una vez realizada la transferencia, tu pedido será preparado y enviado al domicilio indicado.'}
+                  <br /><br /><strong>Asegúrate de copiar tu Número de Pedido y ponerlo en el Concepto de Pago.</strong>
                 </p>
               </div>
 
@@ -223,15 +241,34 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                 </div>
                 <div>
                   <p className="font-bold text-stone-900 text-sm line-clamp-1">{item.name || item.sku}</p>
-                  <p className="text-xs text-stone-500 mb-1">{item.cantidad} x ${item.retail_price.toLocaleString('es-MX')}</p>
-                  <p className="font-bold text-amber-600 text-sm">${(item.retail_price * item.cantidad).toLocaleString('es-MX')}</p>
+                  <p className="text-xs text-stone-500 mb-1">{item.cantidad} x ${cartTotals.isWholesale ? (item.wholesale_price || item.retail_price).toLocaleString('es-MX') : item.retail_price.toLocaleString('es-MX')}</p>
+                  <p className="font-bold text-amber-600 text-sm">${((cartTotals.isWholesale ? (item.wholesale_price || item.retail_price) : item.retail_price) * item.cantidad).toLocaleString('es-MX')}</p>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="border-t border-stone-200 pt-6">
-            <div className="flex justify-between items-end mb-2">
+            <div className="flex justify-between text-sm mb-2 text-stone-500">
+              <span>Subtotal</span>
+              <span>${cartTotals.subtotal.toLocaleString('es-MX')}</span>
+            </div>
+
+            {cartTotals.isWholesale && (
+              <div className="flex justify-between text-sm mb-2 text-blue-600">
+                <span>Descuento Mayoreo</span>
+                <span>-${(cartTotals.subtotal - cartTotals.total).toLocaleString('es-MX')}</span>
+              </div>
+            )}
+
+            {cartTotals.extraDiscountAmount > 0 && (
+              <div className="flex justify-between text-sm mb-2 text-green-600 font-bold">
+                <span>¡Descuento Extra Aplicado!</span>
+                <span>-${cartTotals.extraDiscountAmount.toLocaleString('es-MX')}</span>
+              </div>
+            )}
+
+            <div className="flex justify-between items-end mb-2 mt-4">
               <span className="text-stone-500">Total a pagar</span>
               <span className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</span>
             </div>
@@ -275,6 +312,20 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
                     />
                   </div>
                 </div>
+
+                {/* Email field shown specifically when it's for 'envio' or generally useful */}
+                {formData.tipoEntrega === 'envio' && (
+                  <div className="space-y-1 mt-4 animate-fade-in-up">
+                    <label className="text-xs font-medium text-stone-500 ml-1">Correo Electrónico *</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      placeholder="tu@correo.com (Para enviar guía de rastreo)"
+                    />
+                  </div>
+                )}
               </section>
 
               {/* Section 2: Delivery Method */}

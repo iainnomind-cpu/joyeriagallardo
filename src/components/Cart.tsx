@@ -7,10 +7,17 @@ interface CartProps {
   onUpdateQuantity: (productId: string, delta: number) => void;
   onRemove: (productId: string) => void;
   onCheckout: () => void;
+  cartTotals: {
+    subtotal: number;
+    subtotalCalc: number;
+    extraDiscountAmount: number;
+    total: number;
+    isWholesale: boolean;
+    wholesaleConfig: any;
+  };
 }
 
-export function Cart({ items, onClose, onUpdateQuantity, onRemove, onCheckout }: CartProps) {
-  const total = items.reduce((sum, item) => sum + item.retail_price * item.cantidad, 0);
+export function Cart({ items, onClose, onUpdateQuantity, onRemove, onCheckout, cartTotals }: CartProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50" onClick={onClose}>
@@ -81,7 +88,7 @@ export function Cart({ items, onClose, onUpdateQuantity, onRemove, onCheckout }:
                           <Plus size={14} />
                         </button>
                       </div>
-                      <p className="font-serif font-bold text-stone-900 text-lg">${(item.retail_price * item.cantidad).toLocaleString('es-MX')}</p>
+                      <p className="font-serif font-bold text-stone-900 text-lg">${((cartTotals.isWholesale ? (item.wholesale_price || item.retail_price) : item.retail_price) * item.cantidad).toLocaleString('es-MX')}</p>
                     </div>
                   </div>
                 </div>
@@ -91,9 +98,42 @@ export function Cart({ items, onClose, onUpdateQuantity, onRemove, onCheckout }:
         </div>
         {items.length > 0 && (
           <div className="border-t border-stone-100 p-6 bg-stone-50">
+
+            {cartTotals.isWholesale && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4 text-center">
+                <p className="text-sm text-blue-800 font-bold mb-1">¡Precios de Mayoreo Aplicados!</p>
+                {cartTotals.extraDiscountAmount > 0 ? (
+                  <p className="text-xs text-green-700 font-bold">
+                    ¡+ {cartTotals.wholesaleConfig.extra_discount_percentage}% de Descuento Extra!
+                  </p>
+                ) : cartTotals.wholesaleConfig.enable_extra_discount ? (
+                  <p className="text-xs text-blue-600">
+                    Suma {cartTotals.wholesaleConfig.condition_type === 'pieces' ? `${cartTotals.wholesaleConfig.extra_discount_threshold} piezas` : `$${cartTotals.wholesaleConfig.extra_discount_threshold.toLocaleString('es-MX')}`} para {cartTotals.wholesaleConfig.extra_discount_percentage}% OFF extra.
+                  </p>
+                ) : null}
+              </div>
+            )}
+
+            {!cartTotals.isWholesale && items.length > 0 && cartTotals.wholesaleConfig.threshold > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-center">
+                <p className="text-xs text-amber-800">
+                  Agrega {cartTotals.wholesaleConfig.condition_type === 'pieces'
+                    ? `${cartTotals.wholesaleConfig.threshold - items.reduce((sum, item) => sum + item.cantidad, 0)} piezas más`
+                    : `$${(cartTotals.wholesaleConfig.threshold - cartTotals.subtotal).toLocaleString('es-MX')} más`} para activar Precios de Mayoreo.
+                </p>
+              </div>
+            )}
+
+            {cartTotals.isWholesale && (
+              <div className="flex justify-between items-end mb-2">
+                <span className="text-stone-500 font-medium">Subtotal</span>
+                <span className="text-lg text-stone-500 line-through">${cartTotals.subtotal.toLocaleString('es-MX')}</span>
+              </div>
+            )}
+
             <div className="flex justify-between items-end mb-6">
-              <span className="text-stone-500 font-medium">Subtotal</span>
-              <span className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</span>
+              <span className="text-stone-500 font-medium text-lg">Total</span>
+              <span className="text-3xl font-serif font-bold text-stone-900">${cartTotals.total.toLocaleString('es-MX')}</span>
             </div>
 
             <div className="space-y-3">

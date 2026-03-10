@@ -3,6 +3,7 @@ import { ShoppingCart, Search, Settings } from 'lucide-react';
 import { useAuth } from './hooks/useAuth';
 import { useProducts } from './hooks/useProducts';
 import { useOrders } from './hooks/useOrders';
+import { useWholesaleConfig } from './hooks/useWholesaleConfig';
 import { AdminLogin } from './components/AdminLogin';
 import { AdminPanel } from './components/AdminPanel';
 import { ProductForm } from './components/ProductForm';
@@ -93,7 +94,8 @@ function App() {
     setCart(cart.filter(item => item.id !== productId));
   };
 
-  const total = cart.reduce((sum, item) => sum + item.retail_price * item.cantidad, 0);
+  const cartTotals = useWholesaleConfig(cart);
+  const total = cartTotals.total;
 
   const handleCheckout = () => {
     setShowCart(false);
@@ -101,22 +103,29 @@ function App() {
   };
 
   const handleSubmitOrder = async (formData: OrderFormData) => {
+    let notesString = `Cliente: ${formData.nombre}\nTel: ${formData.telefono}`;
+    if (formData.email) {
+      notesString += `\nEmail: ${formData.email}`;
+    }
+    if (formData.referencias) {
+      notesString += `\nNotas: ${formData.referencias}`;
+    }
+
     const orderData = {
-      nombre: formData.nombre,
-      telefono: formData.telefono,
-      tipo_entrega: formData.tipoEntrega,
-      calle: formData.calle,
-      numero_exterior: formData.numeroExterior,
-      numero_interior: formData.numeroInterior,
-      colonia: formData.colonia,
-      ciudad: formData.ciudad,
-      estado: formData.estado,
-      codigo_postal: formData.codigoPostal,
-      referencias: formData.referencias,
+      sale_channel: 'online' as const,
+      delivery_method: formData.tipoEntrega === 'envio' ? 'shipping' as const : 'pickup' as const,
+      delivery_address: formData.tipoEntrega === 'envio' ? `${formData.calle} ${formData.numeroExterior} ${formData.numeroInterior}, ${formData.colonia}, ${formData.codigoPostal}, ${formData.ciudad}, ${formData.estado}. Ref: ${formData.referencias}` : null,
+      notes: notesString,
       total,
     };
 
-    await createOrder(orderData, cart);
+    const customerData = {
+      name: formData.nombre,
+      phone: formData.telefono,
+      email: formData.email
+    };
+
+    await createOrder(orderData, cart, customerData);
     setCart([]);
   };
 
@@ -291,12 +300,14 @@ function App() {
           onUpdateQuantity={updateQuantity}
           onRemove={removeFromCart}
           onCheckout={handleCheckout}
+          cartTotals={cartTotals}
         />
       )}
 
       {showCheckout && (
         <Checkout
           total={total}
+          cartTotals={cartTotals}
           items={cart}
           onSubmit={handleSubmitOrder}
           onCancel={() => setShowCheckout(false)}

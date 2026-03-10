@@ -25,7 +25,7 @@ export function useProducts() {
     // Select fields matching the ERP table structure
     const { data, error } = await supabase
       .from('products')
-      .select('id, sku, name, description, short_description, detailed_description, images, retail_price, image_url, category, total_stock, is_published_online, created_at, updated_at')
+      .select('id, sku, name, description, short_description, detailed_description, images, retail_price, wholesale_price, image_url, category, total_stock, is_published_online, created_at, updated_at')
       .eq('is_published_online', true)  // Only show published
       .gt('total_stock', 0)             // Only show in stock (optional, good for user)
       .order('created_at', { ascending: false });

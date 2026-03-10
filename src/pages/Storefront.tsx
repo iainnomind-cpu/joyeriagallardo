@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search } from 'lucide-react';
 import { useProducts } from '../hooks/useProducts';
 import { useOrders } from '../hooks/useOrders';
+import { useWholesaleConfig } from '../hooks/useWholesaleConfig';
 import { ProductGrid } from '../components/ProductGrid';
 import { Cart } from '../components/Cart';
 import { Checkout } from '../components/Checkout';
@@ -95,7 +96,8 @@ export function Storefront() {
     setCart(cart.filter(item => item.id !== productId));
   };
 
-  const total = cart.reduce((sum, item) => sum + item.retail_price * item.cantidad, 0);
+  const cartTotals = useWholesaleConfig(cart);
+  const total = cartTotals.total;
 
   const handleCheckout = () => {
     setShowCart(false);
@@ -109,7 +111,13 @@ export function Storefront() {
       : 'Recoger en Tienda';
 
     // 2. Format Notes with Contact Info
-    const notesString = `Cliente: ${formData.nombre}\nTel: ${formData.telefono}\n${formData.referencias ? `Notas: ${formData.referencias}` : ''}`;
+    let notesString = `Cliente: ${formData.nombre}\nTel: ${formData.telefono}`;
+    if (formData.email) {
+      notesString += `\nEmail: ${formData.email}`;
+    }
+    if (formData.referencias) {
+      notesString += `\nNotas: ${formData.referencias}`;
+    }
 
     // 3. Prepare Payload
     const orderData = {
@@ -255,6 +263,7 @@ export function Storefront() {
           onUpdateQuantity={updateQuantity}
           onRemove={removeFromCart}
           onCheckout={handleCheckout}
+          cartTotals={cartTotals}
         />
       )}
 
@@ -262,6 +271,7 @@ export function Storefront() {
         <Checkout
           total={total}
           items={cart}
+          cartTotals={cartTotals}
           onSubmit={handleSubmitOrder}
           onCancel={() => setShowCheckout(false)}
         />

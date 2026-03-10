@@ -8,6 +8,7 @@ export interface Product {
   id: string;
   sku: string; // Was codigo
   retail_price: number; // Was precio
+  wholesale_price: number; // Added for advanced wholesale logic
   category_id: string; // Was categoria_id. ERP uses 'category' column, we will alias it in the hook or rename here. 
   // Let's use 'category_id' here and map it in the SQL query for clarity, or stick to ERP 'category'. 
   // ERP 'category' is the column name. Let's use 'category_id' in frontend for clarity if mapped, OR just 'category'.
@@ -72,6 +73,7 @@ export interface OrderItem {
 export interface OrderFormData {
   nombre: string;
   telefono: string;
+  email: string;
   tipoEntrega: 'recoger' | 'envio';
   calle: string;
   numeroExterior: string;
