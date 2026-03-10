@@ -27,13 +27,46 @@ export function useOrders() {
 
   const createOrder = async (
     orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
-    items: CartItem[]
+    items: CartItem[],
+    customerData?: { name: string, phone: string }
   ) => {
+    let customerId = orderData.customer_id || null;
+
+    if (customerData && !customerId) {
+      // Try to find existing customer by phone
+      const { data: existingCustomer } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('phone', customerData.phone)
+        .maybeSingle();
+
+      if (existingCustomer) {
+        customerId = existingCustomer.id;
+      } else {
+        // Create new customer
+        const { data: newCustomer, error: customerError } = await supabase
+          .from('customers')
+          .insert([{
+            name: customerData.name,
+            phone: customerData.phone,
+            source: 'online',
+            material_preference: 'unspecified'
+          }])
+          .select()
+          .single();
+
+        if (!customerError && newCustomer) {
+          customerId = newCustomer.id;
+        }
+      }
+    }
+
     // Generate a simple order number
     const orderNumber = `PED-${Date.now().toString().slice(-6)}`;
 
     const orderToInsert = {
       ...orderData,
+      customer_id: customerId,
       order_number: orderNumber,
       status: 'pending_payment' as const
     };

@@ -118,13 +118,15 @@ export function Storefront() {
       delivery_address: addressString,
       notes: notesString,
       total,
-      // We don't have a customer_id for guests yet, assuming DB allows null
-      // If DB requires customer link, we might error, but let's try this.
-      // Ideally we should check if `customer_id` is required.
+    };
+
+    const customerData = {
+      name: formData.nombre,
+      phone: formData.telefono
     };
 
     try {
-      const order = await createOrder(orderData, cart);
+      const order = await createOrder(orderData, cart, customerData);
       setCart([]);
       return order;
     } catch (err) {
