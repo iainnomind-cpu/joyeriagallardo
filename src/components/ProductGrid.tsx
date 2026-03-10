@@ -17,14 +17,14 @@ export function ProductGrid({ products, onAddToCart, onProductClick }: ProductGr
   }
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
       {products.map((product) => (
         <div
           key={product.id}
           className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer group"
           onClick={() => onProductClick(product)}
         >
-          <div className="bg-gradient-to-br from-stone-50 to-stone-100 h-40 flex items-center justify-center overflow-hidden relative">
+          <div className="bg-gradient-to-br from-stone-50 to-stone-100 aspect-[4/3] sm:h-40 flex items-center justify-center overflow-hidden relative">
             {product.image_url ? (
               <img
                 src={product.image_url}
@@ -32,7 +32,7 @@ export function ProductGrid({ products, onAddToCart, onProductClick }: ProductGr
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
             ) : (
-              <div className="text-5xl">💎</div>
+              <div className="text-4xl sm:text-5xl">💎</div>
             )}
 
             {/* Stock Badge */}
@@ -43,18 +43,18 @@ export function ProductGrid({ products, onAddToCart, onProductClick }: ProductGr
               </div>
             )}
           </div>
-          <div className="p-4">
+          <div className="p-3 sm:p-4 flex flex-col h-full">
             {/* Swapped: Name is now prominent, SKU is implicit or small */}
-            <h3 className="font-bold text-gray-900 mb-1 leading-tight line-clamp-1">
+            <h3 className="font-bold text-gray-900 text-sm sm:text-base mb-1 leading-tight line-clamp-1">
               {product.name || product.sku}
             </h3>
 
             {/* Short Description */}
-            <p className="text-xs text-gray-500 mb-3 line-clamp-2 h-8">
+            <p className="text-[10px] sm:text-xs text-gray-500 mb-2 sm:mb-3 line-clamp-2 h-7 sm:h-8">
               {product.short_description || `SKU: ${product.sku}`}
             </p>
 
-            <p className="text-xl font-bold text-amber-600 mb-3">${product.retail_price.toLocaleString('es-MX')}</p>
+            <p className="text-lg sm:text-xl font-bold text-amber-600 mb-3 mt-auto">${product.retail_price.toLocaleString('es-MX')}</p>
 
             <button
               onClick={(e) => {

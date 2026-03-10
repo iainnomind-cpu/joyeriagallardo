@@ -163,8 +163,8 @@ export function Storefront() {
       <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-y-3 gap-x-4">
 
         {/* Logo */}
-        <div className="flex items-center gap-2 order-1">
-          <img src="/logo.png" alt="Joyería Gallardo" className={`h-20 w-20 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
+        <div className="flex items-center gap-1 md:gap-2 order-1">
+          <img src="/logo.png" alt="Joyería Gallardo" className={`h-14 w-14 md:h-20 md:w-20 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
           <div>
             <h1 className={`text-base md:text-lg font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
               Joyería Gallardo
@@ -223,8 +223,8 @@ export function Storefront() {
         </div>
 
         {/* Categories - Centered */}
-        <div className="sticky top-[104px] md:top-[112px] z-40 bg-white/95 backdrop-blur-sm py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
-          <div className="flex gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 no-scrollbar px-4">
+        <div className="sticky top-[120px] md:top-[112px] z-40 bg-white/95 backdrop-blur-sm py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
+          <div className="flex gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 no-scrollbar px-5">
             {categories.map(cat => (
               <button
                 key={cat.id}

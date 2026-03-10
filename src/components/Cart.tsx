@@ -73,19 +73,19 @@ export function Cart({ items, onClose, onUpdateQuantity, onRemove, onCheckout, c
                     </div>
 
                     <div className="flex items-center justify-between mt-3">
-                      <div className="flex items-center gap-3 border border-stone-200 rounded-full px-2 py-1">
+                      <div className="flex items-center gap-2 sm:gap-3 border border-stone-200 rounded-full px-2 py-1">
                         <button
                           onClick={() => onUpdateQuantity(item.id, -1)}
-                          className="w-6 h-6 flex items-center justify-center text-stone-500 hover:text-stone-900"
+                          className="w-8 h-8 flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
                         >
-                          <Minus size={14} />
+                          <Minus size={16} />
                         </button>
-                        <span className="text-sm font-medium w-4 text-center">{item.cantidad}</span>
+                        <span className="text-sm font-medium w-6 text-center">{item.cantidad}</span>
                         <button
                           onClick={() => onUpdateQuantity(item.id, 1)}
-                          className="w-6 h-6 flex items-center justify-center text-stone-500 hover:text-stone-900"
+                          className="w-8 h-8 flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-full transition-colors"
                         >
-                          <Plus size={14} />
+                          <Plus size={16} />
                         </button>
                       </div>
                       <p className="font-serif font-bold text-stone-900 text-lg">${((cartTotals.isWholesale ? (item.wholesale_price || item.retail_price) : item.retail_price) * item.cantidad).toLocaleString('es-MX')}</p>

@@ -17,7 +17,7 @@ export function Hero() {
                     Joyería Artesanal<br />
                     Nacional
                 </h1>
-                <p className="text-stone-300 text-base md:text-lg max-w-xl mb-6 font-light leading-relaxed animate-fade-in-up delay-200 hidden md:block">
+                <p className="text-stone-300 text-sm md:text-lg max-w-xl mb-6 font-light leading-relaxed animate-fade-in-up delay-200 block">
                     Precios de mayoreo a partir de 3 piezas. Calidad garantizada con respaldo y seguimiento.
                 </p>
 

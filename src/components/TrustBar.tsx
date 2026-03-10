@@ -27,9 +27,9 @@ export function TrustBar() {
     return (
         <div className="bg-stone-50 border-y border-stone-100 py-12">
             <div className="max-w-7xl mx-auto px-4">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
                     {benefits.map((b, idx) => (
-                        <div key={idx} className="flex flex-col items-center text-center p-4 hover:bg-white hover:shadow-md rounded-xl transition-all cursor-default">
+                        <div key={idx} className="flex flex-col items-center text-center p-3 md:p-4 hover:bg-white hover:shadow-md rounded-xl transition-all cursor-default">
                             <div className="mb-4 p-3 bg-amber-50 rounded-full">
                                 {b.icon}
                             </div>

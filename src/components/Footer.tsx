@@ -17,8 +17,8 @@ export function Footer() {
                             Calidad artesanal, garantía y respaldo en cada pieza.
                         </p>
                         <div className="flex gap-4">
-                            <a href="https://www.facebook.com/share/1CTCwZagsp/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-amber-500 transition-colors"><Facebook /></a>
-                            <a href="https://www.instagram.com/joyasgallardo?igsh=N3dkend1emo2NTNn" target="_blank" rel="noopener noreferrer" className="text-white hover:text-amber-500 transition-colors"><Instagram /></a>
+                            <a href="https://www.facebook.com/share/1CTCwZagsp/" target="_blank" rel="noopener noreferrer" className="p-2 -ml-2 text-white hover:text-amber-500 transition-colors"><Facebook /></a>
+                            <a href="https://www.instagram.com/joyasgallardo?igsh=N3dkend1emo2NTNn" target="_blank" rel="noopener noreferrer" className="p-2 text-white hover:text-amber-500 transition-colors"><Instagram /></a>
                         </div>
                     </div>
 
@@ -56,13 +56,13 @@ export function Footer() {
                             <div className="flex items-center gap-4">
                                 <Phone className="text-amber-500 shrink-0" size={20} />
                                 <div>
-                                    <a href="tel:3330437902" className="hover:text-white transition-colors block">33 3043 7902</a>
-                                    <a href="tel:3320573191" className="hover:text-white transition-colors block">33 2057 3191</a>
+                                    <a href="tel:3330437902" className="p-1 -ml-1 hover:text-white transition-colors block">33 3043 7902</a>
+                                    <a href="tel:3320573191" className="p-1 -ml-1 hover:text-white transition-colors block">33 2057 3191</a>
                                 </div>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Mail className="text-amber-500 shrink-0" size={20} />
-                                <a href="mailto:gallardojoyasmx@gmail.com" className="hover:text-white transition-colors">gallardojoyasmx@gmail.com</a>
+                                <a href="mailto:gallardojoyasmx@gmail.com" className="p-1 -ml-1 hover:text-white transition-colors">gallardojoyasmx@gmail.com</a>
                             </div>
                         </div>
                     </div>
