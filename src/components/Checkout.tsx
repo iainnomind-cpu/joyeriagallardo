@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Home, Store, CheckCircle, ArrowLeft, ShieldCheck, Copy, Info } from 'lucide-react';
 import { OrderFormData, CartItem } from '../types';
 import { useOrders } from '../hooks/useOrders';
@@ -14,6 +14,20 @@ export function Checkout({ total, items, onSubmit, onCancel }: CheckoutProps) {
   const [orderComplete, setOrderComplete] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
   const [bankDetails, setBankDetails] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState<OrderFormData>({
+    nombre: '',
+    telefono: '',
+    tipoEntrega: 'recoger',
+    calle: '',
+    numeroExterior: '',
+    numeroInterior: '',
+    colonia: '',
+    ciudad: '',
+    estado: '',
+    codigoPostal: '',
+    referencias: '',
+  });
   const { getBankDetails } = useOrders();
 
   useEffect(() => {
