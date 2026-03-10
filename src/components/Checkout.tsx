@@ -84,8 +84,8 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
     if (formData.tipoEntrega === 'envio') {
       return (
         <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto backdrop-blur-sm">
-          <div className="flex min-h-full items-center justify-center p-4 py-10">
-            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up">
+          <div className="flex min-h-screen items-start justify-center p-4 py-8 md:items-center">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up my-auto">
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-green-600"></div>
               <div className="p-6 md:p-12">
                 <div className="text-center mb-8">
@@ -197,8 +197,8 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
 
     return (
       <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto backdrop-blur-sm">
-        <div className="flex min-h-full items-center justify-center p-4 py-10">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-fade-in-up">
+        <div className="flex min-h-screen items-start justify-center p-4 py-8 md:items-center">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-fade-in-up my-auto">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600"></div>
             <div className="p-8 md:p-12 text-center">
               <div className="mb-6 flex justify-center">
