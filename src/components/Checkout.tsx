@@ -233,7 +233,7 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
 
           <h2 className="text-2xl font-serif font-bold text-stone-900 mb-6">Resumen</h2>
 
-          <div className="flex-1 overflow-y-auto pr-2 space-y-4 mb-6 custom-scrollbar">
+          <div className="flex-1 max-h-60 md:max-h-none overflow-y-auto pr-2 space-y-4 mb-6 custom-scrollbar">
             {items.map(item => (
               <div key={item.id} className="flex gap-3">
                 <div className="w-16 h-16 bg-white rounded-lg border border-stone-200 flex items-center justify-center shrink-0">
