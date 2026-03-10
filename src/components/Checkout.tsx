@@ -83,110 +83,112 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
   if (orderComplete) {
     if (formData.tipoEntrega === 'envio') {
       return (
-        <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto flex items-center justify-center p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up">
-            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-green-600"></div>
-            <div className="p-8 md:p-12">
-              <div className="text-center mb-8">
-                <div className="flex justify-center mb-4">
-                  <div className="bg-green-50 p-3 rounded-full">
-                    <CheckCircle size={48} className="text-green-600" />
+        <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto backdrop-blur-sm">
+          <div className="flex min-h-full items-center justify-center p-4 py-10">
+            <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden relative animate-fade-in-up">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-green-600"></div>
+              <div className="p-6 md:p-12">
+                <div className="text-center mb-8">
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-green-50 p-3 rounded-full">
+                      <CheckCircle size={48} className="text-green-600" />
+                    </div>
                   </div>
-                </div>
-                <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2">¡Pedido Creado con Éxito!</h2>
-                <p className="text-stone-500">Tu pedido ha sido registrado en nuestro sistema. Para procesar tu envío, por favor transfiere el monto total a la siguiente cuenta.</p>
-              </div>
-
-              <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-bl-lg">
-                  {completedOrder?.order_number}
+                  <h2 className="text-2xl md:text-3xl font-serif font-bold text-stone-900 mb-2">¡Pedido Creado con Éxito!</h2>
+                  <p className="text-stone-500">Tu pedido ha sido registrado en nuestro sistema. Para procesar tu envío, por favor transfiere el monto total a la siguiente cuenta.</p>
                 </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Total a transferir</p>
-                    <p className="text-3xl font-serif font-bold text-stone-900">${(completedOrder?.total || total).toLocaleString('es-MX')}</p>
+                <div className="bg-stone-50 border border-stone-200 rounded-2xl p-6 mb-8 relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-bl-lg">
+                    {completedOrder?.order_number}
                   </div>
 
-                  <div className="h-px bg-stone-200 my-4"></div>
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Total a transferir</p>
+                      <p className="text-3xl font-serif font-bold text-stone-900">${(completedOrder?.total || total).toLocaleString('es-MX')}</p>
+                    </div>
 
-                  {bankDetails ? (
-                    <>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Banco</p>
-                          <p className="font-medium text-stone-900">{bankDetails.bank}</p>
+                    <div className="h-px bg-stone-200 my-4"></div>
+
+                    {bankDetails ? (
+                      <>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Banco</p>
+                            <p className="font-medium text-stone-900">{bankDetails.bank}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Titular</p>
+                            <p className="font-medium text-stone-900">{bankDetails.accountHolder}</p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1">Titular</p>
-                          <p className="font-medium text-stone-900">{bankDetails.accountHolder}</p>
-                        </div>
-                      </div>
 
-                      <div>
-                        <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
-                          CLABE Interbancaria
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(bankDetails.clabe);
-                              alert('CLABE copiada al portapapeles');
-                            }}
-                            className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
-                          >
-                            <Copy size={12} /> Copiar
-                          </button>
-                        </p>
-                        <p className="font-mono text-lg text-stone-900 tracking-wider bg-white p-2 border rounded-lg text-center mt-1">
-                          {bankDetails.clabe}
-                        </p>
-                      </div>
-
-                      {bankDetails.cardNumber && (
                         <div>
                           <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
-                            Número de Tarjeta
+                            CLABE Interbancaria
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(bankDetails.clabe);
+                                alert('CLABE copiada al portapapeles');
+                              }}
+                              className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
+                            >
+                              <Copy size={12} /> Copiar
+                            </button>
                           </p>
                           <p className="font-mono text-lg text-stone-900 tracking-wider bg-white p-2 border rounded-lg text-center mt-1">
-                            {bankDetails.cardNumber}
+                            {bankDetails.clabe}
                           </p>
                         </div>
-                      )}
 
-                      <div>
-                        <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
-                          Concepto de Pago (IMPORTANTE)
-                          <button
-                            onClick={() => {
-                              navigator.clipboard.writeText(completedOrder?.order_number || '');
-                              alert('Concepto copiado al portapapeles');
-                            }}
-                            className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
-                          >
-                            <Copy size={12} /> Copiar
-                          </button>
-                        </p>
-                        <p className="font-mono text-lg text-amber-700 font-bold tracking-wider bg-amber-50 p-2 border border-amber-200 rounded-lg text-center mt-1">
-                          {completedOrder?.order_number}
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-sm text-stone-500 text-center py-4">No hay datos bancarios configurados. Por favor contacta al soporte.</p>
-                  )}
+                        {bankDetails.cardNumber && (
+                          <div>
+                            <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
+                              Número de Tarjeta
+                            </p>
+                            <p className="font-mono text-lg text-stone-900 tracking-wider bg-white p-2 border rounded-lg text-center mt-1">
+                              {bankDetails.cardNumber}
+                            </p>
+                          </div>
+                        )}
+
+                        <div>
+                          <p className="text-xs text-stone-500 uppercase tracking-wide font-bold mb-1 flex items-center justify-between">
+                            Concepto de Pago (IMPORTANTE)
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(completedOrder?.order_number || '');
+                                alert('Concepto copiado al portapapeles');
+                              }}
+                              className="text-blue-600 hover:text-blue-800 normal-case flex items-center gap-1"
+                            >
+                              <Copy size={12} /> Copiar
+                            </button>
+                          </p>
+                          <p className="font-mono text-lg text-amber-700 font-bold tracking-wider bg-amber-50 p-2 border border-amber-200 rounded-lg text-center mt-1">
+                            {completedOrder?.order_number}
+                          </p>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-sm text-stone-500 text-center py-4">No hay datos bancarios configurados. Por favor contacta al soporte.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
 
-              <div className="bg-green-50 text-green-800 p-4 rounded-xl text-sm mb-8 flex items-start gap-3 border border-green-100">
-                <Info className="shrink-0 mt-0.5" size={18} />
-                <p>
-                  {bankDetails?.instructions || 'Una vez realizada la transferencia, tu pedido será preparado y enviado al domicilio indicado.'}
-                  <br /><br /><strong>Asegúrate de copiar tu Número de Pedido y ponerlo en el Concepto de Pago.</strong>
-                </p>
-              </div>
+                <div className="bg-green-50 text-green-800 p-4 rounded-xl text-sm mb-8 flex items-start gap-3 border border-green-100">
+                  <Info className="shrink-0 mt-0.5" size={18} />
+                  <p>
+                    {bankDetails?.instructions || 'Una vez realizada la transferencia, tu pedido será preparado y enviado al domicilio indicado.'}
+                    <br /><br /><strong>Asegúrate de copiar tu Número de Pedido y ponerlo en el Concepto de Pago.</strong>
+                  </p>
+                </div>
 
-              <button onClick={onCancel} className="w-full bg-stone-900 text-white py-4 rounded-full font-bold hover:bg-stone-800 transition-all text-lg shadow-lg">
-                Entendido, volver a la tienda
-              </button>
+                <button onClick={onCancel} className="w-full bg-stone-900 text-white py-4 rounded-full font-bold hover:bg-stone-800 transition-all text-lg shadow-lg">
+                  Entendido, volver a la tienda
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -194,26 +196,28 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
     }
 
     return (
-      <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto flex items-center justify-center p-4 backdrop-blur-sm">
-        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-fade-in-up">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600"></div>
-          <div className="p-12 text-center">
-            <div className="mb-6 flex justify-center">
-              <div className="bg-green-50 p-4 rounded-full">
-                <CheckCircle size={64} className="text-green-600" />
+      <div className="fixed inset-0 bg-stone-900/90 z-50 overflow-y-auto backdrop-blur-sm">
+        <div className="flex min-h-full items-center justify-center p-4 py-10">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden relative animate-fade-in-up">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600"></div>
+            <div className="p-8 md:p-12 text-center">
+              <div className="mb-6 flex justify-center">
+                <div className="bg-green-50 p-4 rounded-full">
+                  <CheckCircle size={64} className="text-green-600" />
+                </div>
               </div>
-            </div>
-            <h2 className="text-3xl font-serif font-bold text-stone-900 mb-2">¡Pedido Confirmado!</h2>
-            <p className="text-stone-500 mb-8">Gracias por tu preferencia, {formData.nombre.split(' ')[0]}.</p>
+              <h2 className="text-3xl font-serif font-bold text-stone-900 mb-2">¡Pedido Confirmado!</h2>
+              <p className="text-stone-500 mb-8">Gracias por tu preferencia, {formData.nombre.split(' ')[0]}.</p>
 
-            <div className="bg-stone-50 rounded-xl p-4 mb-8">
-              <p className="text-sm text-stone-600 font-medium">Nos pondremos en contacto contigo en breve para coordinar tu entrega.</p>
-            </div>
+              <div className="bg-stone-50 rounded-xl p-4 mb-8">
+                <p className="text-sm text-stone-600 font-medium">Nos pondremos en contacto contigo en breve para coordinar tu entrega.</p>
+              </div>
 
-            <div className="flex flex-col gap-3">
-              <button onClick={onCancel} className="w-full bg-stone-900 text-white py-3 rounded-full font-bold hover:bg-stone-800 transition-all">
-                Volver a la tienda
-              </button>
+              <div className="flex flex-col gap-3">
+                <button onClick={onCancel} className="w-full bg-stone-900 text-white py-3 rounded-full font-bold hover:bg-stone-800 transition-all">
+                  Volver a la tienda
+                </button>
+              </div>
             </div>
           </div>
         </div>
