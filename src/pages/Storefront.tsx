@@ -159,14 +159,14 @@ export function Storefront() {
 
   // Navbar Component
   const Navbar = () => (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/60 backdrop-blur-xl shadow-lg border-b border-white/30 py-3' : 'bg-transparent py-4'}`}>
-      <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-y-3 gap-x-4">
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-md border-b border-stone-200 py-2 md:py-3' : 'bg-transparent py-4'}`}>
+      <div className="max-w-7xl mx-auto px-4 flex flex-wrap items-center justify-between gap-y-2 gap-x-2 md:gap-x-4">
 
         {/* Logo */}
-        <div className="flex items-center gap-1 md:gap-2 order-1">
-          <img src="/logo.png" alt="Joyería Gallardo" className={`h-14 w-14 md:h-20 md:w-20 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
+        <div className="flex items-center gap-2 order-1 shrink-0">
+          <img src="/logo.png" alt="Joyería Gallardo" className={`h-10 w-10 sm:h-14 sm:w-14 md:h-16 md:w-16 object-contain transition-all ${isScrolled ? 'brightness-0' : ''}`} />
           <div>
-            <h1 className={`text-base md:text-lg font-serif font-bold ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
+            <h1 className={`text-base md:text-lg font-serif font-bold tracking-tight ${isScrolled ? 'text-stone-900' : 'text-white'}`}>
               Joyería Gallardo
             </h1>
           </div>
@@ -223,8 +223,8 @@ export function Storefront() {
         </div>
 
         {/* Categories - Centered */}
-        <div className="sticky top-[120px] md:top-[112px] z-40 bg-white/95 backdrop-blur-sm py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
-          <div className="flex gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 no-scrollbar px-5">
+        <div className="sticky top-[100px] sm:top-[112px] md:top-[96px] z-40 bg-white/95 backdrop-blur-sm py-2 sm:py-3 mb-6 border-b border-stone-100 flex justify-center transition-all shadow-sm">
+          <div className="flex gap-2 overflow-x-auto max-w-full pb-2 md:pb-0 no-scrollbar px-2 sm:px-5">
             {categories.map(cat => (
               <button
                 key={cat.id}

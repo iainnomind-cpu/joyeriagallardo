@@ -21,7 +21,7 @@ export function ProductGrid({ products, onAddToCart, onProductClick }: ProductGr
       {products.map((product) => (
         <div
           key={product.id}
-          className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer group"
+          className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer group flex flex-col h-full overflow-hidden"
           onClick={() => onProductClick(product)}
         >
           <div className="bg-gradient-to-br from-stone-50 to-stone-100 aspect-[4/3] sm:h-40 flex items-center justify-center overflow-hidden relative">
@@ -43,7 +43,7 @@ export function ProductGrid({ products, onAddToCart, onProductClick }: ProductGr
               </div>
             )}
           </div>
-          <div className="p-3 sm:p-4 flex flex-col h-full">
+          <div className="p-3 sm:p-4 flex flex-grow flex-col">
             {/* Swapped: Name is now prominent, SKU is implicit or small */}
             <h3 className="font-bold text-gray-900 text-sm sm:text-base mb-1 leading-tight line-clamp-1">
               {product.name || product.sku}
