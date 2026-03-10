@@ -235,7 +235,7 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
         </div>
 
         {/* Left Panel: Summary & Total */}
-        <div className="md:w-1/3 bg-stone-50 border-r border-stone-100 flex flex-col">
+        <div className="w-full md:w-1/3 bg-stone-50 border-r border-stone-100 flex flex-col">
           {/* Mobile Summary Toggle */}
           <div
             className="md:hidden flex items-center justify-between p-4 bg-stone-100/50 text-stone-700 font-medium cursor-pointer border-b border-stone-200 transition-colors"
@@ -303,156 +303,156 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Right Panel: Form */}
-      <div className="md:w-2/3 p-6 md:p-8 md:overflow-y-auto bg-white">
-        <div className="max-w-lg mx-auto">
-          <h2 className="text-2xl font-serif font-bold text-stone-900 mb-8">Información de Entrega</h2>
+        {/* Right Panel: Form */}
+        <div className="w-full md:w-2/3 p-6 md:p-8 md:overflow-y-auto bg-white">
+          <div className="max-w-lg mx-auto">
+            <h2 className="text-2xl font-serif font-bold text-stone-900 mb-8">Información de Entrega</h2>
 
-          <div className="space-y-8">
-            {/* Section 1: Contact */}
-            <section>
-              <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
-                <User size={16} className="text-amber-500" /> Datos de contacto
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-stone-500 ml-1">Nombre Completo</label>
-                  <input
-                    type="text"
-                    value={formData.nombre}
-                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                    placeholder="Ej. Juan Pérez"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-medium text-stone-500 ml-1">Teléfono Móvil</label>
-                  <input
-                    type="tel"
-                    value={formData.telefono}
-                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                    placeholder="(33) 0000 0000"
-                  />
-                </div>
-              </div>
-
-              {/* Email field shown specifically when it's for 'envio' or generally useful */}
-              {formData.tipoEntrega === 'envio' && (
-                <div className="space-y-1 mt-4 animate-fade-in-up">
-                  <label className="text-xs font-medium text-stone-500 ml-1">Correo Electrónico *</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                    placeholder="tu@correo.com (Para enviar guía de rastreo)"
-                  />
-                </div>
-              )}
-            </section>
-
-            {/* Section 2: Delivery Method */}
-            <section>
-              <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
-                Método de entrega
-              </h3>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  onClick={() => setFormData({ ...formData, tipoEntrega: 'recoger' })}
-                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'recoger'
-                    ? 'border-stone-900 bg-stone-50 text-stone-900'
-                    : 'border-stone-100 hover:border-stone-200 text-stone-400'
-                    }`}
-                >
-                  <Store size={24} />
-                  <span className="font-bold text-sm">Recoger en Tienda</span>
-                </button>
-                <button
-                  onClick={() => setFormData({ ...formData, tipoEntrega: 'envio' })}
-                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'envio'
-                    ? 'border-stone-900 bg-stone-50 text-stone-900'
-                    : 'border-stone-100 hover:border-stone-200 text-stone-400'
-                    }`}
-                >
-                  <Home size={24} />
-                  <span className="font-bold text-sm">Envío a Domicilio</span>
-                </button>
-              </div>
-            </section>
-
-            {/* Section 3: Address (Conditional) */}
-            {formData.tipoEntrega === 'envio' && (
-              <section className="animate-fade-in-up">
-                <h3 className="font-bold text-stone-800 mb-4 uppercase tracking-wide text-xs">Dirección de envío</h3>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    placeholder="Calle y número"
-                    value={formData.calle}
-                    onChange={(e) => setFormData({ ...formData, calle: e.target.value })}
-                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                  />
-                  <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-8">
+              {/* Section 1: Contact */}
+              <section>
+                <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
+                  <User size={16} className="text-amber-500" /> Datos de contacto
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-stone-500 ml-1">Nombre Completo</label>
                     <input
                       type="text"
-                      placeholder="Colonia"
-                      value={formData.colonia}
-                      onChange={(e) => setFormData({ ...formData, colonia: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Código Postal"
-                      value={formData.codigoPostal}
-                      onChange={(e) => setFormData({ ...formData, codigoPostal: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      value={formData.nombre}
+                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      placeholder="Ej. Juan Pérez"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-medium text-stone-500 ml-1">Teléfono Móvil</label>
                     <input
-                      type="text"
-                      placeholder="Ciudad"
-                      value={formData.ciudad}
-                      onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Estado"
-                      value={formData.estado}
-                      onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      type="tel"
+                      value={formData.telefono}
+                      onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      placeholder="(33) 0000 0000"
                     />
                   </div>
-                  <textarea
-                    placeholder="Referencias (Color de casa, entre calles...)"
-                    value={formData.referencias}
-                    onChange={(e) => setFormData({ ...formData, referencias: e.target.value })}
-                    rows={2}
-                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none resize-none"
-                  />
+                </div>
+
+                {/* Email field shown specifically when it's for 'envio' or generally useful */}
+                {formData.tipoEntrega === 'envio' && (
+                  <div className="space-y-1 mt-4 animate-fade-in-up">
+                    <label className="text-xs font-medium text-stone-500 ml-1">Correo Electrónico *</label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                      placeholder="tu@correo.com (Para enviar guía de rastreo)"
+                    />
+                  </div>
+                )}
+              </section>
+
+              {/* Section 2: Delivery Method */}
+              <section>
+                <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
+                  Método de entrega
+                </h3>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setFormData({ ...formData, tipoEntrega: 'recoger' })}
+                    className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'recoger'
+                      ? 'border-stone-900 bg-stone-50 text-stone-900'
+                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                      }`}
+                  >
+                    <Store size={24} />
+                    <span className="font-bold text-sm">Recoger en Tienda</span>
+                  </button>
+                  <button
+                    onClick={() => setFormData({ ...formData, tipoEntrega: 'envio' })}
+                    className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'envio'
+                      ? 'border-stone-900 bg-stone-50 text-stone-900'
+                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                      }`}
+                  >
+                    <Home size={24} />
+                    <span className="font-bold text-sm">Envío a Domicilio</span>
+                  </button>
                 </div>
               </section>
-            )}
 
-            {/* Action Buttons */}
-            <div className="pt-6">
-              <button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="w-full bg-stone-900 text-white py-4 rounded-full font-bold text-lg hover:bg-stone-800 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
-              >
-                {submitting ? (
-                  <>Procesando...</>
-                ) : (
-                  <>Confirmar Pedido <ArrowLeft className="rotate-180" size={20} /></>
-                )}
-              </button>
+              {/* Section 3: Address (Conditional) */}
+              {formData.tipoEntrega === 'envio' && (
+                <section className="animate-fade-in-up">
+                  <h3 className="font-bold text-stone-800 mb-4 uppercase tracking-wide text-xs">Dirección de envío</h3>
+                  <div className="space-y-4">
+                    <input
+                      type="text"
+                      placeholder="Calle y número"
+                      value={formData.calle}
+                      onChange={(e) => setFormData({ ...formData, calle: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Colonia"
+                        value={formData.colonia}
+                        onChange={(e) => setFormData({ ...formData, colonia: e.target.value })}
+                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Código Postal"
+                        value={formData.codigoPostal}
+                        onChange={(e) => setFormData({ ...formData, codigoPostal: e.target.value })}
+                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <input
+                        type="text"
+                        placeholder="Ciudad"
+                        value={formData.ciudad}
+                        onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
+                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Estado"
+                        value={formData.estado}
+                        onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                      />
+                    </div>
+                    <textarea
+                      placeholder="Referencias (Color de casa, entre calles...)"
+                      value={formData.referencias}
+                      onChange={(e) => setFormData({ ...formData, referencias: e.target.value })}
+                      rows={2}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none resize-none"
+                    />
+                  </div>
+                </section>
+              )}
+
+              {/* Action Buttons */}
+              <div className="pt-6">
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="w-full bg-stone-900 text-white py-4 rounded-full font-bold text-lg hover:bg-stone-800 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
+                >
+                  {submitting ? (
+                    <>Procesando...</>
+                  ) : (
+                    <>Confirmar Pedido <ArrowLeft className="rotate-180" size={20} /></>
+                  )}
+                </button>
+              </div>
+
             </div>
-
           </div>
         </div>
       </div>
