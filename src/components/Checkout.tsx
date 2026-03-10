@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Home, Store, CheckCircle, ArrowLeft, ShieldCheck, Copy, Info } from 'lucide-react';
+import { User, Home, Store, CheckCircle, ArrowLeft, ShieldCheck, Copy, Info, ChevronDown, ShoppingCart } from 'lucide-react';
 import { OrderFormData, CartItem } from '../types';
 import { useOrders } from '../hooks/useOrders';
 
@@ -19,6 +19,7 @@ interface CheckoutProps {
 }
 
 export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: CheckoutProps) {
+  const [showSummaryOnMobile, setShowSummaryOnMobile] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<any>(null);
   const [bankDetails, setBankDetails] = useState<any>(null);
@@ -222,212 +223,236 @@ export function Checkout({ total, items, cartTotals, onSubmit, onCancel }: Check
 
   return (
     <div className="fixed inset-0 bg-stone-900/80 z-50 overflow-y-auto flex md:items-center justify-center backdrop-blur-sm">
-      <div className="bg-white w-full max-w-4xl md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-screen md:min-h-0 md:max-h-[90vh]">
+      <div className="bg-white w-full max-w-4xl md:rounded-3xl shadow-2xl md:overflow-hidden flex flex-col md:flex-row min-h-screen md:min-h-0 md:max-h-[90vh]">
+
+        {/* Mobile Header */}
+        <div className="md:hidden bg-white px-4 py-3 border-b border-stone-100 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+          <button onClick={onCancel} className="flex items-center gap-2 text-stone-900 font-bold">
+            <ArrowLeft size={18} />
+            <span className="text-sm">Volver al carrito</span>
+          </button>
+          <span className="font-serif font-bold text-lg">Checkout</span>
+        </div>
 
         {/* Left Panel: Summary & Total */}
-        <div className="md:w-1/3 bg-stone-50 p-6 md:p-8 border-r border-stone-100 flex flex-col">
-          <button onClick={onCancel} className="flex items-center gap-2 text-stone-500 hover:text-stone-900 mb-8 transition-colors self-start">
-            <ArrowLeft size={18} />
-            <span className="font-medium text-sm">Volver</span>
-          </button>
-
-          <h2 className="text-2xl font-serif font-bold text-stone-900 mb-6">Resumen</h2>
-
-          <div className="flex-1 max-h-60 md:max-h-none overflow-y-auto pr-2 space-y-4 mb-6 custom-scrollbar">
-            {items.map(item => (
-              <div key={item.id} className="flex gap-3">
-                <div className="w-16 h-16 bg-white rounded-lg border border-stone-200 flex items-center justify-center shrink-0">
-                  {item.image_url ? <img src={item.image_url} className="w-full h-full object-cover rounded-lg" /> : <span className="text-xl">💎</span>}
-                </div>
-                <div>
-                  <p className="font-bold text-stone-900 text-sm line-clamp-1">{item.name || item.sku}</p>
-                  <p className="text-xs text-stone-500 mb-1">{item.cantidad} x ${cartTotals.isWholesale ? (item.wholesale_price || item.retail_price).toLocaleString('es-MX') : item.retail_price.toLocaleString('es-MX')}</p>
-                  <p className="font-bold text-amber-600 text-sm">${((cartTotals.isWholesale ? (item.wholesale_price || item.retail_price) : item.retail_price) * item.cantidad).toLocaleString('es-MX')}</p>
-                </div>
-              </div>
-            ))}
+        <div className="md:w-1/3 bg-stone-50 border-r border-stone-100 flex flex-col">
+          {/* Mobile Summary Toggle */}
+          <div
+            className="md:hidden flex items-center justify-between p-4 bg-stone-100/50 text-stone-700 font-medium cursor-pointer border-b border-stone-200 transition-colors"
+            onClick={() => setShowSummaryOnMobile(!showSummaryOnMobile)}
+          >
+            <div className="flex items-center gap-2 text-sm text-stone-800">
+              <ShoppingCart size={18} className="text-amber-600" />
+              <span>{showSummaryOnMobile ? 'Ocultar resumen' : 'Mostrar resumen'}</span>
+              <ChevronDown size={18} className={`transition-transform duration-300 text-stone-500 ${showSummaryOnMobile ? 'rotate-180' : ''}`} />
+            </div>
+            <span className="font-bold text-stone-900 text-lg">${total.toLocaleString('es-MX')}</span>
           </div>
 
-          <div className="border-t border-stone-200 pt-6">
-            <div className="flex justify-between text-sm mb-2 text-stone-500">
-              <span>Subtotal</span>
-              <span>${cartTotals.subtotal.toLocaleString('es-MX')}</span>
+          <div className={`p-6 md:p-8 flex-col flex-1 ${showSummaryOnMobile ? 'flex' : 'hidden md:flex'}`}>
+            <button onClick={onCancel} className="hidden md:flex items-center gap-2 text-stone-500 hover:text-stone-900 mb-8 transition-colors self-start">
+              <ArrowLeft size={18} />
+              <span className="font-medium text-sm">Volver</span>
+            </button>
+
+            <h2 className="hidden md:block text-2xl font-serif font-bold text-stone-900 mb-6">Resumen</h2>
+
+            <div className="md:flex-1 md:overflow-y-auto pr-2 space-y-4 mb-6 custom-scrollbar">
+              {items.map(item => (
+                <div key={item.id} className="flex gap-3">
+                  <div className="w-16 h-16 bg-white rounded-lg border border-stone-200 flex items-center justify-center shrink-0">
+                    {item.image_url ? <img src={item.image_url} className="w-full h-full object-cover rounded-lg" /> : <span className="text-xl">💎</span>}
+                  </div>
+                  <div>
+                    <p className="font-bold text-stone-900 text-sm line-clamp-1">{item.name || item.sku}</p>
+                    <p className="text-xs text-stone-500 mb-1">{item.cantidad} x ${cartTotals.isWholesale ? (item.wholesale_price || item.retail_price).toLocaleString('es-MX') : item.retail_price.toLocaleString('es-MX')}</p>
+                    <p className="font-bold text-amber-600 text-sm">${((cartTotals.isWholesale ? (item.wholesale_price || item.retail_price) : item.retail_price) * item.cantidad).toLocaleString('es-MX')}</p>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {cartTotals.isWholesale && (
-              <div className="flex justify-between text-sm mb-2 text-blue-600">
-                <span>Descuento Mayoreo</span>
-                <span>-${(cartTotals.subtotal - cartTotals.total).toLocaleString('es-MX')}</span>
+            <div className="border-t border-stone-200 pt-6">
+              <div className="flex justify-between text-sm mb-2 text-stone-500">
+                <span>Subtotal</span>
+                <span>${cartTotals.subtotal.toLocaleString('es-MX')}</span>
               </div>
-            )}
 
-            {cartTotals.extraDiscountAmount > 0 && (
-              <div className="flex justify-between text-sm mb-2 text-green-600 font-bold">
-                <span>¡Descuento Extra Aplicado!</span>
-                <span>-${cartTotals.extraDiscountAmount.toLocaleString('es-MX')}</span>
+              {cartTotals.isWholesale && (
+                <div className="flex justify-between text-sm mb-2 text-blue-600">
+                  <span>Descuento Mayoreo</span>
+                  <span>-${(cartTotals.subtotal - cartTotals.total).toLocaleString('es-MX')}</span>
+                </div>
+              )}
+
+              {cartTotals.extraDiscountAmount > 0 && (
+                <div className="flex justify-between text-sm mb-2 text-green-600 font-bold">
+                  <span>¡Descuento Extra Aplicado!</span>
+                  <span>-${cartTotals.extraDiscountAmount.toLocaleString('es-MX')}</span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-end mb-2 mt-4">
+                <span className="text-stone-500">Total a pagar</span>
+                <span className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</span>
               </div>
-            )}
-
-            <div className="flex justify-between items-end mb-2 mt-4">
-              <span className="text-stone-500">Total a pagar</span>
-              <span className="text-3xl font-serif font-bold text-stone-900">${total.toLocaleString('es-MX')}</span>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-stone-400 bg-white p-2 rounded-lg border border-stone-100">
-              <ShieldCheck size={14} />
-              Compra 100% segura y protegida
+              <div className="flex items-center gap-2 text-xs text-stone-400 bg-white p-2 rounded-lg border border-stone-100">
+                <ShieldCheck size={14} />
+                Compra 100% segura y protegida
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Right Panel: Form */}
-        <div className="md:w-2/3 p-6 md:p-8 overflow-y-auto bg-white">
-          <div className="max-w-lg mx-auto">
-            <h2 className="text-2xl font-serif font-bold text-stone-900 mb-8">Información de Entrega</h2>
+      {/* Right Panel: Form */}
+      <div className="md:w-2/3 p-6 md:p-8 md:overflow-y-auto bg-white">
+        <div className="max-w-lg mx-auto">
+          <h2 className="text-2xl font-serif font-bold text-stone-900 mb-8">Información de Entrega</h2>
 
-            <div className="space-y-8">
-              {/* Section 1: Contact */}
-              <section>
-                <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
-                  <User size={16} className="text-amber-500" /> Datos de contacto
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium text-stone-500 ml-1">Nombre Completo</label>
-                    <input
-                      type="text"
-                      value={formData.nombre}
-                      onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      placeholder="Ej. Juan Pérez"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-medium text-stone-500 ml-1">Teléfono Móvil</label>
-                    <input
-                      type="tel"
-                      value={formData.telefono}
-                      onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      placeholder="(33) 0000 0000"
-                    />
-                  </div>
+          <div className="space-y-8">
+            {/* Section 1: Contact */}
+            <section>
+              <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
+                <User size={16} className="text-amber-500" /> Datos de contacto
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-stone-500 ml-1">Nombre Completo</label>
+                  <input
+                    type="text"
+                    value={formData.nombre}
+                    onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
+                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                    placeholder="Ej. Juan Pérez"
+                  />
                 </div>
-
-                {/* Email field shown specifically when it's for 'envio' or generally useful */}
-                {formData.tipoEntrega === 'envio' && (
-                  <div className="space-y-1 mt-4 animate-fade-in-up">
-                    <label className="text-xs font-medium text-stone-500 ml-1">Correo Electrónico *</label>
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
-                      placeholder="tu@correo.com (Para enviar guía de rastreo)"
-                    />
-                  </div>
-                )}
-              </section>
-
-              {/* Section 2: Delivery Method */}
-              <section>
-                <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
-                  Método de entrega
-                </h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <button
-                    onClick={() => setFormData({ ...formData, tipoEntrega: 'recoger' })}
-                    className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'recoger'
-                      ? 'border-stone-900 bg-stone-50 text-stone-900'
-                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
-                      }`}
-                  >
-                    <Store size={24} />
-                    <span className="font-bold text-sm">Recoger en Tienda</span>
-                  </button>
-                  <button
-                    onClick={() => setFormData({ ...formData, tipoEntrega: 'envio' })}
-                    className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'envio'
-                      ? 'border-stone-900 bg-stone-50 text-stone-900'
-                      : 'border-stone-100 hover:border-stone-200 text-stone-400'
-                      }`}
-                  >
-                    <Home size={24} />
-                    <span className="font-bold text-sm">Envío a Domicilio</span>
-                  </button>
+                <div className="space-y-1">
+                  <label className="text-xs font-medium text-stone-500 ml-1">Teléfono Móvil</label>
+                  <input
+                    type="tel"
+                    value={formData.telefono}
+                    onChange={(e) => setFormData({ ...formData, telefono: e.target.value })}
+                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                    placeholder="(33) 0000 0000"
+                  />
                 </div>
-              </section>
-
-              {/* Section 3: Address (Conditional) */}
-              {formData.tipoEntrega === 'envio' && (
-                <section className="animate-fade-in-up">
-                  <h3 className="font-bold text-stone-800 mb-4 uppercase tracking-wide text-xs">Dirección de envío</h3>
-                  <div className="space-y-4">
-                    <input
-                      type="text"
-                      placeholder="Calle y número"
-                      value={formData.calle}
-                      onChange={(e) => setFormData({ ...formData, calle: e.target.value })}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                    />
-                    <div className="grid grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Colonia"
-                        value={formData.colonia}
-                        onChange={(e) => setFormData({ ...formData, colonia: e.target.value })}
-                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Código Postal"
-                        value={formData.codigoPostal}
-                        onChange={(e) => setFormData({ ...formData, codigoPostal: e.target.value })}
-                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Ciudad"
-                        value={formData.ciudad}
-                        onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
-                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Estado"
-                        value={formData.estado}
-                        onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-                        className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
-                      />
-                    </div>
-                    <textarea
-                      placeholder="Referencias (Color de casa, entre calles...)"
-                      value={formData.referencias}
-                      onChange={(e) => setFormData({ ...formData, referencias: e.target.value })}
-                      rows={2}
-                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none resize-none"
-                    />
-                  </div>
-                </section>
-              )}
-
-              {/* Action Buttons */}
-              <div className="pt-6">
-                <button
-                  onClick={handleSubmit}
-                  disabled={submitting}
-                  className="w-full bg-stone-900 text-white py-4 rounded-full font-bold text-lg hover:bg-stone-800 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
-                >
-                  {submitting ? (
-                    <>Procesando...</>
-                  ) : (
-                    <>Confirmar Pedido <ArrowLeft className="rotate-180" size={20} /></>
-                  )}
-                </button>
               </div>
 
+              {/* Email field shown specifically when it's for 'envio' or generally useful */}
+              {formData.tipoEntrega === 'envio' && (
+                <div className="space-y-1 mt-4 animate-fade-in-up">
+                  <label className="text-xs font-medium text-stone-500 ml-1">Correo Electrónico *</label>
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all"
+                    placeholder="tu@correo.com (Para enviar guía de rastreo)"
+                  />
+                </div>
+              )}
+            </section>
+
+            {/* Section 2: Delivery Method */}
+            <section>
+              <h3 className="font-bold text-stone-800 mb-4 flex items-center gap-2 uppercase tracking-wide text-xs">
+                Método de entrega
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <button
+                  onClick={() => setFormData({ ...formData, tipoEntrega: 'recoger' })}
+                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'recoger'
+                    ? 'border-stone-900 bg-stone-50 text-stone-900'
+                    : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                    }`}
+                >
+                  <Store size={24} />
+                  <span className="font-bold text-sm">Recoger en Tienda</span>
+                </button>
+                <button
+                  onClick={() => setFormData({ ...formData, tipoEntrega: 'envio' })}
+                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-2 ${formData.tipoEntrega === 'envio'
+                    ? 'border-stone-900 bg-stone-50 text-stone-900'
+                    : 'border-stone-100 hover:border-stone-200 text-stone-400'
+                    }`}
+                >
+                  <Home size={24} />
+                  <span className="font-bold text-sm">Envío a Domicilio</span>
+                </button>
+              </div>
+            </section>
+
+            {/* Section 3: Address (Conditional) */}
+            {formData.tipoEntrega === 'envio' && (
+              <section className="animate-fade-in-up">
+                <h3 className="font-bold text-stone-800 mb-4 uppercase tracking-wide text-xs">Dirección de envío</h3>
+                <div className="space-y-4">
+                  <input
+                    type="text"
+                    placeholder="Calle y número"
+                    value={formData.calle}
+                    onChange={(e) => setFormData({ ...formData, calle: e.target.value })}
+                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Colonia"
+                      value={formData.colonia}
+                      onChange={(e) => setFormData({ ...formData, colonia: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Código Postal"
+                      value={formData.codigoPostal}
+                      onChange={(e) => setFormData({ ...formData, codigoPostal: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      placeholder="Ciudad"
+                      value={formData.ciudad}
+                      onChange={(e) => setFormData({ ...formData, ciudad: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Estado"
+                      value={formData.estado}
+                      onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
+                      className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none"
+                    />
+                  </div>
+                  <textarea
+                    placeholder="Referencias (Color de casa, entre calles...)"
+                    value={formData.referencias}
+                    onChange={(e) => setFormData({ ...formData, referencias: e.target.value })}
+                    rows={2}
+                    className="w-full px-4 py-3 bg-stone-50 border-stone-200 border rounded-lg focus:border-amber-500 focus:bg-white outline-none resize-none"
+                  />
+                </div>
+              </section>
+            )}
+
+            {/* Action Buttons */}
+            <div className="pt-6">
+              <button
+                onClick={handleSubmit}
+                disabled={submitting}
+                className="w-full bg-stone-900 text-white py-4 rounded-full font-bold text-lg hover:bg-stone-800 disabled:opacity-70 disabled:cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
+              >
+                {submitting ? (
+                  <>Procesando...</>
+                ) : (
+                  <>Confirmar Pedido <ArrowLeft className="rotate-180" size={20} /></>
+                )}
+              </button>
             </div>
+
           </div>
         </div>
       </div>
