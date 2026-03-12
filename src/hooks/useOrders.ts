@@ -25,52 +25,32 @@ export function useOrders() {
     setLoading(false);
   }, []);
 
-  const createOrder = async (
-    orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
-    items: CartItem[],
-    customerData?: { name: string, phone: string }
-  ) => {
-    let customerId = orderData.customer_id || null;
-
-    if (customerData && !customerId) {
-      // Try to find existing customer by phone
-      const { data: existingCustomer } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('phone', customerData.phone)
-        .maybeSingle();
-
-      if (existingCustomer) {
-        customerId = existingCustomer.id;
-
-        // Update the customer with the latest name and email from the checkout
-        await supabase
-          .from('customers')
-          .update({
-            name: customerData.name,
-            email: (orderData as any).email || null
-          })
-          .eq('id', customerId);
-
-      } else {
-        // Create new customer
-        const { data: newCustomer, error: customerError } = await supabase
-          .from('customers')
-          .insert([{
-            name: customerData.name,
-            phone: customerData.phone,
-            email: (orderData as any).email || null,
-            source: 'online',
-            material_preference: 'unspecified'
-          }])
-          .select()
-          .single();
-
-        if (!customerError && newCustomer) {
-          customerId = newCustomer.id;
-        }
-      }
+const createOrder = async (
+  orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
+  items: CartItem[],
+  customerData?: { name: string, phone: string }
+) => {
+  const { data, error } = await supabase.functions.invoke('create-order', {
+    body: {
+      items: items.map(item => ({
+        product_id: item.id,
+        quantity: item.cantidad
+      })),
+      sale_channel: 'online',
+      delivery_method: orderData.delivery_method || 'pickup',
+      delivery_address: orderData.delivery_address || 'Recoger en Tienda',
+      notes: orderData.notes || '',
+      customer_name: customerData?.name || '',
+      customer_phone: customerData?.phone || '',
+      customer_email: (orderData as any).email || null,
     }
+  })
+
+  if (error) throw new Error(`Error al crear pedido: ${error.message}`)
+  if (data?.error) throw new Error(data.error)
+
+  return data
+}
 
     // Generate a simple order number
     const orderNumber = `PED-${Date.now().toString().slice(-6)}`;
