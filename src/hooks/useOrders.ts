@@ -25,81 +25,31 @@ export function useOrders() {
     setLoading(false);
   }, []);
 
-const createOrder = async (
-  orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
-  items: CartItem[],
-  customerData?: { name: string, phone: string }
-) => {
-  const { data, error } = await supabase.functions.invoke('create-order', {
-    body: {
-      items: items.map(item => ({
-        product_id: item.id,
-        quantity: item.cantidad
-      })),
-      sale_channel: 'online',
-      delivery_method: orderData.delivery_method || 'pickup',
-      delivery_address: orderData.delivery_address || 'Recoger en Tienda',
-      notes: orderData.notes || '',
-      customer_name: customerData?.name || '',
-      customer_phone: customerData?.phone || '',
-      customer_email: (orderData as any).email || null,
-    }
-  })
+  const createOrder = async (
+    orderData: Omit<Order, 'id' | 'created_at' | 'status' | 'order_number'>,
+    items: CartItem[],
+    customerData?: { name: string, phone: string }
+  ) => {
+    const { data, error } = await supabase.functions.invoke('create-order', {
+      body: {
+        items: items.map(item => ({
+          product_id: item.id,
+          quantity: item.cantidad
+        })),
+        sale_channel: 'online',
+        delivery_method: orderData.delivery_method || 'pickup',
+        delivery_address: orderData.delivery_address || 'Recoger en Tienda',
+        notes: orderData.notes || '',
+        customer_name: customerData?.name || '',
+        customer_phone: customerData?.phone || '',
+        customer_email: (orderData as any).email || null,
+      }
+    })
 
-  if (error) throw new Error(`Error al crear pedido: ${error.message}`)
-  if (data?.error) throw new Error(data.error)
+    if (error) throw new Error(`Error al crear pedido: ${error.message}`)
+    if (data?.error) throw new Error(data.error)
 
-  return data
-}
-
-    // Generate a simple order number
-    const orderNumber = `PED-${Date.now().toString().slice(-6)}`;
-
-    const orderToInsert = {
-      ...orderData,
-      customer_id: customerId,
-      order_number: orderNumber,
-      status: 'pending_payment' as const
-    };
-
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert([orderToInsert])
-      .select()
-      .single();
-
-    if (orderError) {
-      throw new Error(`Error al crear pedido: ${orderError.message}`);
-    }
-
-    const orderItems = items.map(item => ({
-      order_id: order.id,
-      product_id: item.id,
-      unit_price: item.retail_price,
-      quantity: item.cantidad,
-      subtotal: item.retail_price * item.cantidad,
-    }));
-
-    const { error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItems);
-
-    if (itemsError) {
-      throw new Error(`Error al guardar productos: ${itemsError.message}`);
-    }
-
-    // Email notification disabled due to CORS/Server configuration
-    /*
-    try {
-      await supabase.functions.invoke('send-order-email', {
-        body: { orderId: order.id },
-      });
-    } catch (emailError) {
-      console.warn('Error initiating email:', emailError);
-    }
-    */
-
-    return order;
+    return data
   };
 
   const getOrderItems = async (orderId: string): Promise<OrderItem[]> => {
